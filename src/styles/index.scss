@@ -1,0 +1,215 @@
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+li {
+  list-style: none;
+}
+div:focus {
+  outline: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: ' ';
+    clear: both;
+    height: 0;
+  }
+}
+
+// rem 体系 默认css
+.app-container {
+  display: flex;
+  align-items: center;
+  height: var(--appMainHeight);
+  width: 100vw;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.mac-scroller {
+  /*滚动条效果，Mac样式*/
+  ::-webkit-scrollbar {
+    display: block;
+    position: absolute;
+    z-index: 9999;
+    bottom: 0;
+    right: 0;
+    width: 7px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+  ::-webkit-scrollbar-thumb {
+    min-height: 5px;
+    width: 3px;
+    border-radius: 1px;
+    border: 1px solid #888;
+    // ::-webkit-border-radius: 1px;
+    background-color: #bbb;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    min-height: 5px;
+    width: 7px;
+    border-radius: 20px;
+    border: 1px solid #444;
+    background-color: #aaa;
+  }
+  ::-webkit-scrollbar-thumb:active {
+    min-height: 5px;
+    min-width: 7px;
+    border-radius: 1px;
+    border: 1px solid #888;
+    // ::-webkit-border-radius: 1px;
+    background-color: #aaa;
+  }
+}
+
+.iconBox {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px 4px 4px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dddddd;
+}
+.smallImg {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+.btn {
+  height: 32px;
+  border-radius: 4px 4px 4px 4px;
+  opacity: 1;
+  border: 1px solid #dddddd;
+  padding: 6px;
+  font-size: 14px;
+  line-height: 14px;
+  display: flex;
+  align-items: center;
+
+  cursor: pointer;
+  &:hover {
+    background-color: #dedede;
+  }
+  &:active {
+    background-color: #c6c6c6;
+  }
+}
+.btn2 {
+  height: 32px;
+  border-radius: 4px 4px 4px 4px;
+  opacity: 1;
+  border: 1px solid #3246d2;
+  color: #fff;
+  background-color: #3246d2;
+  padding: 6px;
+  font-size: 14px;
+  line-height: 14px;
+
+  display: flex;
+  align-items: center;
+
+  cursor: pointer;
+  &:hover {
+    background-color: #4759de;
+  }
+  &:active {
+    background-color: #3246d2;
+  }
+}
+.btn1 {
+  width: auto;
+  height: 32px;
+  border-radius: 4px 4px 4px 4px;
+  opacity: 1;
+  border: 1px solid #3246d2;
+  color: #3246d2;
+  padding: 8px 30px;
+  font-size: 14px;
+  line-height: 14px;
+  cursor: pointer;
+  &:hover {
+    background-color: #c8cdf4;
+  }
+  &:active {
+    background-color: #abb5ff;
+  }
+}
+
+.el-button--primary.is-plain {
+  background-color: #ffffff;
+  border-color: #d8d8d8;
+  color: #898a8d;
+}
+
+.noData {
+  box-shadow: 0px 0px 3px 0px #ff0033 !important;
+}
+
+.undone {
+  color: #737373 !important;
+  img {
+    filter: grayscale(100%);
+  }
+  cursor: not-allowed !important;
+}
+
+.undone2 {
+  background: none !important;
+  color: #a3a3a3 !important;
+  display: flex;
+  align-items: center;
+  img {
+    filter: grayscale(100%) brightness(400%);
+  }
+  cursor: not-allowed !important;
+  &:hover {
+    background: none !important;
+  }
+}

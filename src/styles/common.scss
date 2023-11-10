@@ -1,0 +1,558 @@
+div {
+  box-sizing: border-box !important;
+}
+.flex {
+  display: flex;
+}
+
+.flex-v {
+  flex-direction: column;
+}
+.flex-r {
+  flex-direction: row;
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-align-start {
+  align-items: flex-start;
+}
+
+.flex-align-end {
+  align-items: flex-end;
+}
+
+.flex-align-stretch {
+  align-items: stretch;
+}
+
+.flex-pack-center {
+  justify-content: center;
+}
+
+.flex-pack-start {
+  justify-content: flex-start;
+}
+
+.flex-pack-end {
+  justify-content: flex-end;
+}
+
+.flex-pack-between {
+  justify-content: space-between;
+}
+
+.flex-pack-around {
+  justify-content: space-around;
+}
+
+.flex-align-content-start {
+  align-content: flex-start;
+}
+.flex-align-content-center {
+  align-content: center;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+.fx {
+  display: flex;
+  align-items: center;
+}
+.flCenter {
+  display: flex;
+  align-items: center;
+}
+.flBetween {
+  display: flex;
+  justify-content: space-between;
+}
+.fxcenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.w100 {
+  width: 100%;
+}
+
+.h100 {
+  height: 100%;
+}
+
+.unl {
+  text-decoration: underline;
+}
+.c-main {
+  color: #fa581c;
+}
+.c-white {
+  color: white;
+}
+
+.c-ffb {
+  color: #ffb800;
+}
+
+.c-008 {
+  color: #0089ff;
+}
+
+.c-fe5 {
+  color: #fe552e;
+}
+
+.c-1d2 {
+  color: #1d2129;
+}
+
+.c-fa5 {
+  color: #fa581c;
+}
+
+.c-d4b {
+  color: #4db942;
+}
+
+.c-f53 {
+  color: #f53f3f;
+}
+
+.c-505 {
+  color: #505968;
+}
+
+.c-888f {
+  color: #888f9b;
+}
+
+.c-de3 {
+  color: #de311b;
+}
+
+.c-fe6 {
+  color: #fe662e;
+}
+
+.c-00085 {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.c-ed6 {
+  color: #ed6a0c;
+}
+
+.c-4e7 {
+  color: #4e70f7;
+}
+
+.c-ff4 {
+  color: #ff4d3c;
+}
+
+.c-737 {
+  color: #737577;
+}
+
+.c-171 {
+  color: #171a1d;
+}
+
+.c-1714 {
+  color: rgba(23, 26, 29, 0.4);
+}
+
+.c-1716 {
+  color: rgba(23, 26, 29, 0.6);
+}
+
+.c-155 {
+  color: #155bd4;
+}
+
+.c-4a6 {
+  color: #4a6df5;
+}
+
+.c-2a6 {
+  color: #2a61db;
+}
+
+.c-313 {
+  color: #31373d;
+}
+
+.relative {
+  position: relative;
+}
+
+.max-line1 {
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  white-space: normal; // 规定段落中的文本不进行换行
+  word-break: break-all; // 允许单词中换行，在容器的最右边进行断开不会浪费控件
+  word-wrap: break-word; // 防止长单词溢出，单词内部短句
+}
+
+.max-line2 {
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  white-space: normal; // 规定段落中的文本不进行换行
+  word-break: break-all; // 允许单词中换行，在容器的最右边进行断开不会浪费控件
+  word-wrap: break-word; // 防止长单词溢出，单词内部短句
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.pointer {
+  cursor: pointer;
+}
+.fz11 {
+  font-size: 12px !important;
+}
+
+.fz12 {
+  font-size: 12px !important;
+}
+
+.fz14 {
+  font-size: 14px !important;
+}
+
+.fz16 {
+  font-size: 16px !important;
+}
+
+.fz18 {
+  font-size: 18px !important;
+}
+
+.fz20 {
+  font-size: 20px !important;
+}
+
+.fz22 {
+  font-size: 22px !important;
+}
+
+.fz24 {
+  font-size: 24px !important;
+}
+
+.fz26 {
+  font-size: 26px !important;
+}
+
+.fz28 {
+  font-size: 28px !important;
+}
+
+.fz30 {
+  font-size: 30px !important;
+}
+
+.fz34 {
+  font-size: 34px !important;
+}
+
+.fz36 {
+  font-size: 36px !important;
+}
+.fzu32 {
+  font-size: 1rem;
+}
+.fzu28 {
+  font-size: 0.875rem;
+}
+.cu-333 {
+  color: #333333;
+}
+.cu-666 {
+  color: #666666;
+}
+.cu-171 {
+  color: #171a1d;
+}
+.mt2 {
+  margin-top: 2px;
+}
+
+.mt4 {
+  margin-top: 4px;
+}
+
+.mt6 {
+  margin-top: 6px;
+}
+
+.mt8 {
+  margin-top: 8px;
+}
+
+.mt10 {
+  margin-top: 10px;
+}
+
+.mt12 {
+  margin-top: 12px;
+}
+
+.mt14 {
+  margin-top: 14px;
+}
+
+.mt15 {
+  margin-top: 15px;
+}
+
+.mt16 {
+  margin-top: 16px;
+}
+
+.mt18 {
+  margin-top: 18px;
+}
+
+.mt20 {
+  margin-top: 20px;
+}
+
+.mt22 {
+  margin-top: 22px;
+}
+
+.mt24 {
+  margin-top: 24px;
+}
+
+.mt28 {
+  margin-top: 28px;
+}
+
+.mt30 {
+  margin-top: 30px;
+}
+
+.mt34 {
+  margin-top: 34px;
+}
+
+.mt38 {
+  margin-top: 38px;
+}
+
+.mt40 {
+  margin-top: 40px;
+}
+
+.mt44 {
+  margin-top: 44px;
+}
+.mb2 {
+  margin-bottom: 2px;
+}
+.mb4 {
+  margin-bottom: 4px;
+}
+.mb8 {
+  margin-bottom: 8px;
+}
+.mb14 {
+  margin-bottom: 14px;
+}
+.mb15 {
+  margin-bottom: 15px;
+}
+.mb16 {
+  margin-bottom: 16px;
+}
+.mb24 {
+  margin-bottom: 24px;
+}
+.ml2 {
+  margin-left: 2px;
+}
+
+.ml4 {
+  margin-left: 4px;
+}
+
+.ml5 {
+  margin-left: 5px;
+}
+
+.ml6 {
+  margin-left: 6px;
+}
+
+.ml8 {
+  margin-left: 8px;
+}
+
+.ml10 {
+  margin-left: 10px;
+}
+
+.ml12 {
+  margin-left: 12px;
+}
+
+.ml16 {
+  margin-left: 16px;
+}
+
+.ml20 {
+  margin-left: 20px;
+}
+
+.ml22 {
+  margin-left: 22px;
+}
+
+.ml24 {
+  margin-left: 24px;
+}
+
+.ml28 {
+  margin-left: 28px;
+}
+
+.ml35 {
+  margin-left: 35px;
+}
+
+.ml40 {
+  margin-left: 40px;
+}
+
+.ml50 {
+  margin-left: 50px;
+}
+.mr2 {
+  margin-right: 2px;
+}
+.mr4 {
+  margin-right: 4px;
+}
+.mr6 {
+  margin-right: 6px;
+}
+.mr8 {
+  margin-right: 8px;
+}
+.mr12 {
+  margin-right: 12px;
+}
+
+.mr16 {
+  margin-right: 16px;
+}
+
+.mr24 {
+  margin-right: 24px;
+}
+.br2 {
+  border-radius: 2px;
+}
+.br4 {
+  border-radius: 4px;
+}
+
+.br8 {
+  border-radius: 8px;
+}
+.pall2 {
+  padding: 2px;
+}
+.pall15 {
+  padding: 15px;
+}
+.pall16 {
+  padding: 16px;
+}
+.p24 {
+  padding: 24px;
+}
+.pt2 {
+  padding-top: 2px;
+}
+.pt4 {
+  padding-top: 4px;
+}
+.pb2 {
+  padding-bottom: 2px;
+}
+.pb4 {
+  padding-bottom: 4px;
+}
+.pl12 {
+  padding-left: 12px;
+}
+.icon-size16 {
+  width: 16px;
+  height: 16px;
+}
+.icon-size32 {
+  width: 32px;
+  height: 32px;
+}
+.vxe-header--column {
+  background: #ffffff !important;
+  border-right: 1px solid #ebedf0;
+}
+.vxe-body--column {
+  background: #f9f9f9;
+  height: 60px !important;
+}
+.vxe-header--column.col--ellipsis > .vxe-cell .vxe-cell--title {
+  overflow: visible !important;
+}
+.el-dialog__body {
+  padding-bottom: 24px;
+  padding-top: 24px;
+}
+.padd10 {
+  padding: 0 10px;
+}
+.padd16 {
+  padding: 0 16px;
+}
+.padd6 {
+  padding: 0 6px;
+}
+
+.absolute {
+  position: absolute;
+}

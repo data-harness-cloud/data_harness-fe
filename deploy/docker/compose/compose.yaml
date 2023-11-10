@@ -1,0 +1,34 @@
+version: '3'
+
+networks:
+  sdt:
+    driver: bridge
+
+volumes:
+  sdt_fe_data:
+
+services:
+  sdt_fe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sdt_fe:v1
+    container_name: sdt_fe
+    restart: unless-stopped
+    ports:
+      - 80:80
+    environment:
+      - TZ=Asia/Shanghai
+      - SDT_BE_URL=
+      - OPENAI_API_URL=
+      - OPENAI_API_KEY=
+    volumes:
+      - sdt_fe_data:/usr/share/nginx/html
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sdt
+    

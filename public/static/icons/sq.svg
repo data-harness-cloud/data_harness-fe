@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="矩形_6262" data-name="矩形 6262" width="16" height="16" transform="translate(1443 124)" fill="#fff"/>
+    </clipPath>
+  </defs>
+  <g id="蒙版组_16168" data-name="蒙版组 16168" transform="translate(-1443 -124)" clip-path="url(#clip-path)">
+    <g id="组_16189" data-name="组 16189" transform="translate(1437.229 116.629)">
+      <path id="路径_25046" data-name="路径 25046" d="M8,10.5H19.546" fill="none" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path id="路径_25047" data-name="路径 25047" d="M24,19.5h5.773" transform="translate(-10.227 -5.753)" fill="none" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path id="路径_25048" data-name="路径 25048" d="M24,28.5h5.773" transform="translate(-10.227 -11.506)" fill="none" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path id="路径_25049" data-name="路径 25049" d="M8,37.5H19.546" transform="translate(0 -17.258)" fill="none" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <path id="路径_25050" data-name="路径 25050" d="M8,19l2.886,1.8L8,22.608Z" transform="translate(0 -5.433)" fill="#999" stroke="#999" stroke-linejoin="round" stroke-width="1"/>
+    </g>
+  </g>
+</svg>

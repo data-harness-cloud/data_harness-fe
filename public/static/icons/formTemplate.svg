@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="矩形_6063" data-name="矩形 6063" width="24" height="24" transform="translate(1493 487)" fill="#fff"/>
+    </clipPath>
+  </defs>
+  <g id="表单模版" transform="translate(-1493 -487)" clip-path="url(#clip-path)">
+    <g id="组_16046" data-name="组 16046" transform="translate(1476.973 467.252)">
+      <path id="路径_24756" data-name="路径 24756" d="M383.259,628.882c0-.286-.153-.519-.34-.519H372.7c-.188,0-.34.232-.34.519v2.594c0,.286.153.519.34.519h10.214c.188,0,.34-.232.34-.519Z" transform="translate(-347.668 -593.277)" fill="#247ade"/>
+      <path id="路径_24757" data-name="路径 24757" d="M383.259,419.428c0-.286-.153-.519-.34-.519H372.7c-.188,0-.34.232-.34.519v2.594c0,.286.153.519.34.519h10.214c.188,0,.34-.232.34-.519Z" transform="translate(-347.668 -388.492)" fill="#69cb91"/>
+      <path id="路径_24758" data-name="路径 24758" d="M383.259,209.973c0-.286-.153-.519-.34-.519H372.7c-.188,0-.34.232-.34.519v2.594c0,.286.153.519.34.519h10.214c.188,0,.34-.232.34-.519Z" transform="translate(-347.668 -183.707)" fill="#a0bff7"/>
+      <path id="路径_24759" data-name="路径 24759" d="M162.909,211.27a1.816,1.816,0,1,1,1.816,1.816A1.816,1.816,0,0,1,162.909,211.27Z" transform="translate(-142.883 -183.707)" fill="#69cb91"/>
+      <path id="路径_24760" data-name="路径 24760" d="M162.909,420.725a1.816,1.816,0,1,1,1.816,1.816A1.816,1.816,0,0,1,162.909,420.725Z" transform="translate(-142.883 -388.492)" fill="#247ade"/>
+      <path id="路径_24761" data-name="路径 24761" d="M162.909,630.18A1.816,1.816,0,1,1,164.725,632,1.816,1.816,0,0,1,162.909,630.18Z" transform="translate(-142.883 -593.277)" fill="#a0bff7"/>
+    </g>
+  </g>
+</svg>
