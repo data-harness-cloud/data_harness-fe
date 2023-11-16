@@ -42,9 +42,8 @@
 
 <script setup>
 // 获取当前实例
-import { getCurrentInstance, reactive, onMounted } from 'vue'
+import { getCurrentInstance } from 'vue'
 import CronSet from '@/components/CronSet/index.vue'
-import CronSetTest from '@/components/CronSet/indexCopy.vue'
 
 const { proxy } = getCurrentInstance()
 const props = defineProps({

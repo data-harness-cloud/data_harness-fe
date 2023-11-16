@@ -71,7 +71,7 @@ div:focus {
 
 .mac-scroller {
   /*滚动条效果，Mac样式*/
-  ::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     display: block;
     position: absolute;
     z-index: 9999;
@@ -80,10 +80,10 @@ div:focus {
     width: 7px;
     height: 10px;
   }
-  ::-webkit-scrollbar-track {
+  &::-webkit-scrollbar-track {
     background-color: rgba(255, 255, 255, 0.5);
   }
-  ::-webkit-scrollbar-thumb {
+  &::-webkit-scrollbar-thumb {
     min-height: 5px;
     width: 3px;
     border-radius: 1px;
@@ -91,20 +91,39 @@ div:focus {
     // ::-webkit-border-radius: 1px;
     background-color: #bbb;
   }
-  ::-webkit-scrollbar-thumb:hover {
+  &::-webkit-scrollbar-thumb:hover {
     min-height: 5px;
     width: 7px;
     border-radius: 20px;
     border: 1px solid #444;
     background-color: #aaa;
   }
-  ::-webkit-scrollbar-thumb:active {
+  &::-webkit-scrollbar-thumb:active {
     min-height: 5px;
     min-width: 7px;
     border-radius: 1px;
     border: 1px solid #888;
     // ::-webkit-border-radius: 1px;
     background-color: #aaa;
+  }
+}
+.scroller {
+  &::-webkit-scrollbar {
+    display: initial;
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #ffffff;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #d0d0d0;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #a5a5a5;
   }
 }
 

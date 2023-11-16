@@ -1,6 +1,7 @@
 import dataTransfer from './dataTransfer.vue'
 import sqlNode from './sqlNode.vue'
 import shellNode from './shellNode.vue'
+import ifNode from './ifNode.vue'
 import { register, getTeleport } from '@antv/x6-vue-shape'
 import { Graph, Shape, Color, Path, Cell, Edge } from '@antv/x6'
 
@@ -107,6 +108,64 @@ export function NodeRegister() {
       },
     },
   })
+  register({
+    shape: 'ifNode',
+    width: 86,
+    height: 86,
+    component: ifNode,
+    ports: {
+      groups: {
+        in: {
+          position: 'top',
+          attrs: {
+            circle: {
+              r: 3,
+              magnet: true,
+              strokeWidth: 1,
+              fill: 'transparent',
+              stroke: 'transparent',
+            },
+          },
+        },
+        bOut: {
+          position: 'bottom',
+          attrs: {
+            circle: {
+              r: 3,
+              magnet: true,
+              strokeWidth: 1,
+              fill: 'transparent',
+              stroke: 'transparent',
+            },
+          },
+        },
+        lOut: {
+          position: 'left',
+          attrs: {
+            circle: {
+              r: 3,
+              magnet: true,
+              strokeWidth: 1,
+              fill: 'transparent',
+              stroke: 'transparent',
+            },
+          },
+        },
+        rOut: {
+          position: 'right',
+          attrs: {
+            circle: {
+              r: 3,
+              magnet: true,
+              strokeWidth: 1,
+              fill: 'transparent',
+              stroke: 'transparent',
+            },
+          },
+        },
+      },
+    },
+  })
 
   // 注册连线
   Graph.registerConnector(
@@ -116,6 +175,31 @@ export function NodeRegister() {
       const path = new Path()
       path.appendSegment(Path.createSegment('M', sourcePoint.x, sourcePoint.y - 4))
       path.appendSegment(Path.createSegment('L', sourcePoint.x, sourcePoint.y + 12))
+      // 水平三阶贝塞尔曲线
+      path.appendSegment(
+        Path.createSegment(
+          'C',
+          sourcePoint.x,
+          sourcePoint.y < targetPoint.y ? sourcePoint.y + hgap / 2 : sourcePoint.y - hgap / 2,
+          targetPoint.x,
+          sourcePoint.y < targetPoint.y ? sourcePoint.y + hgap / 2 : sourcePoint.y - hgap / 2,
+          targetPoint.x,
+          targetPoint.y - 6
+        )
+      )
+      path.appendSegment(Path.createSegment('L', targetPoint.x, targetPoint.y + 2))
+
+      return path.serialize()
+    },
+    true
+  )
+  Graph.registerConnector(
+    'parallelConnector',
+    (sourcePoint, targetPoint) => {
+      const hgap = Math.abs(targetPoint.y - sourcePoint.y)
+      const path = new Path()
+      path.appendSegment(Path.createSegment('M', sourcePoint.x - 4, sourcePoint.y))
+      path.appendSegment(Path.createSegment('L', sourcePoint.x + 12, sourcePoint.y))
       // 水平三阶贝塞尔曲线
       path.appendSegment(
         Path.createSegment(

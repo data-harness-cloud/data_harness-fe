@@ -329,8 +329,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, onMounted } from 'vue'
 import { dateFtt, isLeapYear, deepClone } from '@/core/js/$'
+import { dayjs } from 'element-plus'
 const emit = defineEmits(['getCron'])
 const props = defineProps({
   propCronAnalyticInformation: {
@@ -467,9 +467,10 @@ const myState = reactive({
         executionTime: '',
       },
     },
-
     operationPlan: '',
     cron: '',
+    startTime: null,
+    endTime: null,
   },
 })
 if (props.propCronAnalyticInformation) {
@@ -504,7 +505,10 @@ const convertToCronExpression = (dateTime) => {
   // 构建cron表达式
   const cronExpression = `${second} ${minute} ${hour} ${day} ${month} ? ${year}`
   myState.formData.operationPlan = `${year}年${month}月${day}日${hour}时${minute}分${second}秒执行`
+  myState.formData.startTime = dayjs(date).subtract(1, 'hour').format('YYYY-MM-DD HH:mm:ss')
+  myState.formData.endTime = dayjs(date).add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')
   myState.formData.cron = cronExpression
+
   return cronExpression
 }
 
@@ -514,36 +518,20 @@ const minuteToCronExpression = (startDate, endDate, startTime, endTime, interval
     refresh()
     return
   }
-
   if (endTime == '00:00') {
     endTime = '24:00'
-  }
-  console.log(endTime, 'endTime', typeof endTime)
-  const startDateIn = new Date(startDate)
-  let startDateData = {
-    year: startDateIn.getFullYear(),
-    month: startDateIn.getMonth() + 1,
-    day: startDateIn.getDate(),
-  }
-  const endDateIn = new Date(endDate)
-  let endDateData = {
-    year: endDateIn.getFullYear(),
-    month: endDateIn.getMonth() + 1,
-    day: endDateIn.getDate(),
   }
   const startTimeIn = new Date(`1971-01-01 ${startTime}:00`)
   let startTimeData = {
     hour: startTimeIn.getHours(),
     minute: startTimeIn.getMinutes(),
   }
-  console.log('startTimeData', startTimeData)
   let endTimeData = {
     hour: endTime.split(':')[0],
     minute: endTime.split(':')[1],
   }
   myState.formData.operationPlan = `从${startDate} ${startTime}开始，中每间隔${interval}分钟执行一次。`
   let cronExpression
-  console.log(startTimeData.hour)
   if (startTimeData.hour == '0' && endTimeData.hour == '24') {
     cronExpression = `0 ${startTimeData.minute}/${interval} * * * ? *`
   } else {
@@ -579,28 +567,10 @@ const hourToCronExpression = (startDate, endDate, startTime, endTime, interval) 
     refresh()
     return
   }
-  const startDateIn = new Date(startDate)
-  let startDateData = {
-    year: startDateIn.getFullYear(),
-    month: startDateIn.getMonth() + 1,
-    day: startDateIn.getDate(),
-  }
-  const endDateIn = new Date(endDate)
-  let endDateData = {
-    year: endDateIn.getFullYear(),
-    month: endDateIn.getMonth() + 1,
-    day: endDateIn.getDate(),
-  }
   const startTimeIn = new Date(`1971-01-01 ${startTime}:00`)
   let startTimeData = {
     hour: startTimeIn.getHours(),
     minute: startTimeIn.getMinutes(),
-  }
-  console.log('startTimeData', startTimeData)
-  const endTimeIn = new Date(`1971-01-01 ${endTime}:00`)
-  let endTimeData = {
-    hour: endTimeIn.getHours(),
-    minute: endTimeIn.getMinutes(),
   }
   myState.formData.operationPlan = `从${startDate} ${startTime}开始，中每间隔${interval}小时执行一次。`
   const cronExpression = `0 ${startTimeData.minute} ${startTimeData.hour}/${interval} * * ? *`
@@ -614,19 +584,6 @@ const hourSTToCronExpression = (startDate, endDate, intervalArr) => {
     refresh()
     return
   }
-  const startDateIn = new Date(startDate)
-  let startDateData = {
-    year: startDateIn.getFullYear(),
-    month: startDateIn.getMonth() + 1,
-    day: startDateIn.getDate(),
-  }
-  const endDateIn = new Date(endDate)
-  let endDateData = {
-    year: endDateIn.getFullYear(),
-    month: endDateIn.getMonth() + 1,
-    day: endDateIn.getDate(),
-  }
-
   myState.formData.operationPlan = `从${startDate}开始 每天的${intervalArr.join('、')}时分别执行一次。`
   const cronExpression = `0 0 ${intervalArr.join(',')} * * ? *`
   myState.formData.cron = cronExpression
@@ -670,13 +627,6 @@ const dayToCronExpression = (startDate, endDate, intervalTime) => {
     month: startDateIn.getMonth() + 1,
     day: startDateIn.getDate(),
   }
-  const endDateIn = new Date(endDate)
-  let endDateData = {
-    year: endDateIn.getFullYear(),
-    month: endDateIn.getMonth() + 1,
-    day: endDateIn.getDate(),
-  }
-
   const intervalTimeIn = new Date(`1971-01-01 ${intervalTime}:00`)
   let intervalTimeData = {
     hour: intervalTimeIn.getHours(),
@@ -708,18 +658,6 @@ const weekToCronExpression = (startDate, endDate, appointedDayArr, intervalTime)
   if (!every) {
     refresh()
     return
-  }
-  const startDateIn = new Date(startDate)
-  let startDateData = {
-    year: startDateIn.getFullYear(),
-    month: startDateIn.getMonth() + 1,
-    day: startDateIn.getDate(),
-  }
-  const endDateIn = new Date(endDate)
-  let endDateData = {
-    year: endDateIn.getFullYear(),
-    month: endDateIn.getMonth() + 1,
-    day: endDateIn.getDate(),
   }
   const appointedDayValArr = appointedDayArr.map((item) => item.value)
   const intervalTimeIn = new Date(`1971-01-01 ${intervalTime}:00`)
@@ -767,12 +705,6 @@ const monthToCronExpression = (startDate, endDate, appointedMonthArr, intervalTi
     month: startDateIn.getMonth() + 1,
     day: startDateIn.getDate(),
   }
-  const endDateIn = new Date(endDate)
-  let endDateData = {
-    year: endDateIn.getFullYear(),
-    month: endDateIn.getMonth() + 1,
-    day: endDateIn.getDate(),
-  }
   const intervalTimeIn = new Date(`1971-01-01 ${intervalTime}:00`)
   let intervalTimeData = {
     hour: intervalTimeIn.getHours(),
@@ -818,12 +750,6 @@ const yearToCronExpression = (startDate, endDate, mounth, day, intervalTime) => 
     month: startDateIn.getMonth() + 1,
     day: startDateIn.getDate(),
   }
-  const endDateIn = new Date(endDate)
-  let endDateData = {
-    year: endDateIn.getFullYear(),
-    month: endDateIn.getMonth() + 1,
-    day: endDateIn.getDate(),
-  }
   const intervalTimeIn = new Date(`1971-01-01 ${intervalTime}:00`)
   let intervalTimeData = {
     hour: intervalTimeIn.getHours(),
@@ -862,7 +788,7 @@ watch(
       cron: newVal,
       entryIntoForceTime: myState.formData.period[myState.selectedPattern]
         ? myState.formData.period[myState.selectedPattern].entryIntoForceTime
-        : [null, null],
+        : [myState.formData.startTime, myState.formData.endTime],
       cronAnalyticInformation: myState.formData,
     })
   }

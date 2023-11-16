@@ -21,6 +21,15 @@ import router from '@/router'
 
 import http from '@/core/http/index'
 
+// import XEUtils from 'xe-utils'
+// import { VXETable, Menu, Icon, Column, Grid, Table } from 'vxe-table'
+// import zhCN from 'vxe-table/es/locale/lang/zh-CN'
+
+// // 按需加载的方式默认是不带国际化的，自定义国际化需要自行解析占位符 '{0}'，例如：
+// VXETable.config({
+//   i18n: (key, args) => XEUtils.toFormatString(XEUtils.get(zhCN, key), args),
+// })
+
 export default function init(app) {
   if (!app) {
     console.error('必须传入app对象！！')
@@ -44,6 +53,16 @@ export default function init(app) {
   // 注册全局组件
   app.component('TableTemplate', TableTemplate)
 
+  // function useTable(app) {
+  //   app.use(Menu)
+  //   app
+  //     .use(Icon)
+  //     .use(Column)
+  //     .use(Grid)
+  //     // 安装表格
+  //     .use(Table)
+  // }
+
   // ElementPlus 组件注册
   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
@@ -55,6 +74,7 @@ export default function init(app) {
   // 引用路由实例// 引入路由
   // const router = () => import('@/router/index.vue')
   app.use(router)
+  // app.use(useTable)
 
   app.config.globalProperties.download = http.download
   app.config.globalProperties.doUrl = http.doUrl
