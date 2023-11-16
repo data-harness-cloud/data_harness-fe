@@ -5,7 +5,7 @@
     </div>
     <div class="remoteHosts">
       <el-select v-model="state.formData.data.sourceId" placeholder="选择数据源" style="margin-right: 10px">
-        <el-option v-for="item in remoteHosts" :key="item.id" :label="item.datasourceName" :value="item.id"></el-option>
+        <el-option v-for="item in remoteHosts" :key="item.id" :label="item.showName" :value="item.id"></el-option>
       </el-select>
     </div>
     <div id="monaco"></div>

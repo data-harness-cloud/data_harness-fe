@@ -26,4 +26,10 @@ export default class ProjectEngineController {
   static listWithGroup(sender, params, axiosOption, httpOption) {
     return sender.doUrl('/admin/app/projectEngine/listWithGroup', 'post', params, axiosOption, httpOption)
   }
+  static getAllDatabaseName(sender, params, axiosOption, httpOption) {
+    return sender.doUrl('/admin/app/projectEngine/getAllDatabaseName', 'post', params, axiosOption, httpOption)
+  }
+  static executeSql(sender, params, axiosOption, httpOption) {
+    return sender.doUrl('/admin/app/projectEngine/executeSql', 'post', params, axiosOption, httpOption)
+  }
 }

@@ -25,7 +25,7 @@
           </div>
         </template>
       </div>
-      <div style="overflow: hidden">
+      <div class="flex flex-v" style="overflow: hidden; height: 100%; width: 100%">
         <div class="monacoHeader">
           <div class="monacoHeaderLeft">
             <div class="monacoBtn" @click="runSQL">执行</div>
@@ -38,37 +38,79 @@
               placeholder="选择数据源"
               style="margin-right: 6px; width: 160px"
             >
-              <el-option
-                v-for="item in databases"
-                :key="item.id"
-                :label="item.datasourceName"
-                :value="item.id"
-              ></el-option>
+              <el-option v-for="item in databases" :key="item" :label="item" :value="item"></el-option>
             </el-select>
           </div>
         </div>
         <div id="monaco"></div>
-        <!-- <div v-if="selectedObj.startTime" class="tt"></div> -->
+
         <div class="sqlPane" v-if="selectedObj.result">
-          <div v-for="res in selectedObj.result" :key="res.sql">
-            <div class="flBetween">
-              <div class="flex"></div>
-              <div class="flex">
-                <div>导出</div>
-                <div>另存为</div>
-                <div>分析</div>
+          <div class="resultTags">
+            <div class="tabPane" :class="{ tabPaneAct: !selectResult }" @click="selectResult = null">输出</div>
+            <div
+              v-for="(res, index) in selectedObj.result"
+              :key="res.sql"
+              class="tabPane"
+              :class="{ tabPaneAct: selectResult?.id === res.id }"
+              @click="selectResult = res"
+            >
+              结果{{ index + 1 }}
+            </div>
+          </div>
+
+          <div class="sqlBox" v-if="selectResult && selectResult.type == 'select' && selectResult.data">
+            <div class="tableOps">
+              <div class="ops1">
+                <img src="/static/icons/zuo.svg" @click="selectResult.prevPage()" />
+                <el-dropdown trigger="click">
+                  <div class="page">
+                    {{ selectResult.currentpage * selectResult.pageSize }} -
+                    {{ (selectResult.currentpage + 1) * selectResult.pageSize }}
+                  </div>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item @click="selectResult.setPageSize(100)"> 100条/页 </el-dropdown-item>
+                      <el-dropdown-item @click="selectResult.setPageSize(200)"> 200条/页 </el-dropdown-item>
+                      <el-dropdown-item @click="selectResult.setPageSize(500)"> 500条/页 </el-dropdown-item>
+                      <el-dropdown-item @click="selectResult.setPageSize(1000)"> 1000条/页 </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+                <img src="/static/icons/you.svg" @click="selectResult.nextPage()" />
+              </div>
+              <div class="ops2">
+                <img src="/static/icons/export.svg" />
+                <img src="/static/icons/save2.svg" />
+                <img src="/static/icons/analysis.svg" />
               </div>
             </div>
-            <div class="resultPane">
-              <el-table :data="res" style="width: 100%">
-                <el-table-column
-                  v-for="columnName in selectedObj.result.columnName"
-                  :key="columnName"
-                  :prop="columnName"
-                  :label="columnName"
-                />
-              </el-table>
+            <div class="resultPane scroller">
+              <table class="resultTable">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th v-for="field in selectResult.data.queryResultData?.fieldList" :key="field">{{ field }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(queryData, index) in selectResult.data.queryResultData?.queryDataList" :key="index">
+                    <td>{{ index + selectResult.pageSize * selectResult.currentpage }}</td>
+                    <td v-for="field in selectResult.data.queryResultData?.fieldList" :key="field">
+                      {{ queryData[field] }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+          </div>
+          <div v-else-if="!selectResult" class="output scroller">
+            <template v-for="(res, index) in result" :key="index">
+              <div class="flex mt6">
+                <span style="color: #64c37d; margin-right: 6px">{{ res.database }} > </span>
+                <span style="color: #5161db">{{ res.sql }}</span>
+              </div>
+              <div class="mt2">{{ res.message }}</div>
+            </template>
           </div>
         </div>
       </div>
@@ -78,12 +120,17 @@
 
 <script setup>
 import * as monaco from 'monaco-editor'
-import { DevConsoleController, DatabaseManagementController, ProjectDatasourceController } from '@/api/index'
+import { DevConsoleController, ProjectEngineController } from '@/api/index'
 import ConsoleController from '@/core/classes/DevConsoleController/index'
 import { onMounted, onBeforeUnmount } from 'vue'
 import { language as sqlLanguage } from 'monaco-editor/esm/vs/basic-languages/sql/sql.js'
 import http from '@/core/http/index'
 import { ElMessage } from 'element-plus'
+import { SqlController } from './SqlController'
+import useUserStore from '@/store/modules/user'
+import { index } from '@antv/x6-common/lib/dom/elem'
+
+const userStore = useUserStore()
 let monacoEditor
 const consoleName = ref('')
 function monacoConfig() {
@@ -142,44 +189,37 @@ function initMonaco() {
   })
 }
 const consoleController = new ConsoleController()
-
-function runSQL() {
+const selectResult = ref(null)
+const result = ref([])
+async function runSQL() {
   if (!selectedObj.value.queryDatabase) {
     ElMessage.error('请选择数据源')
     return
   }
-
-  const database = databases.value.find((item) => item.id === selectedObj.value.queryDatabase)
-  console.log(database)
-  const databaseContent = JSON.parse(database.datasourceContent)
-  DatabaseManagementController.executeSql(http, {
-    databaseManagement: {
-      ...databaseContent,
-    },
-    sql: addLimitToSelect(monacoEditor.getValue()),
-  }).then((res) => {
-    console.log(res.data)
-    selectedObj.value.result = res.data
-  })
-}
-
-function addLimitToSelect(str) {
-  const selectIndex = str.toLowerCase().lastIndexOf('select')
-  if (selectIndex !== -1) {
-    if (str.toLowerCase().indexOf('limit') !== -1) return str
-    const lastSemicolonIndex = str.lastIndexOf(';')
-    if (lastSemicolonIndex !== -1) {
-      str = str.slice(0, lastSemicolonIndex) + ' LIMIT 100' + str.slice(lastSemicolonIndex)
-    } else {
-      str += ' LIMIT 100'
-    }
+  selectedObj.value.result.length = 0
+  const str = monacoEditor.getModel().getValueInRange(monacoEditor.getSelection())
+  if (!str) {
+    ElMessage.error('请选择要执行的sql')
+    return
   }
-  return str
+  const sqlStrings = str.split(';')
+  for (let i = 0; i < sqlStrings.length; i++) {
+    if (!sqlStrings[i]) continue
+    const sqlController = new SqlController({
+      sql: sqlStrings[i],
+      databaseName: selectedObj.value.queryDatabase,
+      projectId: userStore.projectId,
+      id: i + 1,
+      result: result,
+    })
+    sqlController.execute()
+    selectedObj.value.result.push(sqlController)
+  }
+  selectResult.value = selectedObj.value.result[0]
 }
 
 function saveDev() {
   selectedObj.value.queryStatements = monacoEditor.getValue()
-  console.log(selectedObj.value)
   const fromData = {
     dataDeptId: selectedObj.value.dataDeptId,
     dataUserId: selectedObj.value.dataUserId,
@@ -209,7 +249,7 @@ function selectObj(obj) {
     if (!obj.queryDatabase) obj.queryDatabase = ''
     obj.startTime = ''
     obj.queryTime = ''
-    obj.result = null
+    obj.result = []
     openedConsoleList.value.push(obj)
   }
 
@@ -229,21 +269,20 @@ function addConsole() {
 
 const databases = ref(null)
 async function getDatabase() {
-  await ProjectDatasourceController.list(
+  await ProjectEngineController.getAllDatabaseName(
     http,
     {
-      projectDatasourceDtoFilter: {},
+      projectId: userStore.projectId,
     },
     null,
     { showMask: false }
   ).then((res) => {
-    databases.value = res.data.dataList
+    databases.value = res.data
   })
 }
 
 onMounted(() => {
   getDatabase()
-  //   initMonaco()
   monacoConfig()
   getDevConsole()
 })
@@ -380,46 +419,50 @@ onBeforeUnmount(() => {
   display: flex;
   background: #ffffff;
   height: 34px;
-  .tabPane {
-    font-size: 14px;
-    font-weight: 400;
-    color: #666666;
-    display: flex;
-    align-items: center;
-    line-height: 24px;
-    padding: 0 12px;
-    cursor: pointer;
+}
+.tabPane {
+  font-size: 14px;
+  font-weight: 400;
+  color: #666666;
+  display: flex;
+  align-items: center;
+  line-height: 24px;
+  padding: 0 12px;
+  cursor: pointer;
+  .xx {
+    width: 10px;
+    height: 10px;
+    display: none;
+  }
+  &:hover {
+    color: #3246d2;
+    background: #f4f7fa;
     .xx {
-      width: 10px;
-      height: 10px;
-      display: none;
-    }
-    &:hover {
-      color: #3246d2;
-      background: #f4f7fa;
-      .xx {
-      }
     }
   }
-  .tabPaneAct {
-    color: #3246d2;
-    background: #ffffff;
-    border-bottom: 1px solid #3246d2;
-    img {
-      transform: translateY(-60px);
-      filter: drop-shadow(#3246d2 0 60px);
-      overflow: hidden;
-    }
-    .xx {
-      display: block;
-    }
+}
+.tabPaneAct {
+  color: #3246d2;
+  background: #ffffff;
+  border-bottom: 1px solid #3246d2;
+  img {
+    transform: translateY(-60px);
+    filter: drop-shadow(#3246d2 0 60px);
+    overflow: hidden;
+  }
+  .xx {
+    display: block;
   }
 }
 .sqlPane {
   width: 100%;
-  height: 400px;
-  margin-top: 32px;
+  flex: 1 0 400px;
   border: 1px solid #dddddd;
+  overflow: hidden;
+}
+.sqlBox {
+  height: 100%;
+  overflow: hidden;
 }
 .tt {
   width: 100%;
@@ -431,14 +474,96 @@ onBeforeUnmount(() => {
   font-weight: normal;
   color: #222;
 }
+.resultTags {
+  margin-top: 26px;
+  height: 30px;
+  display: flex;
+}
+.tableOps {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f4f7fa;
+  border-top: 1px solid #c7d8ee;
+  padding: 0 8px;
+  height: 24px;
+  .page {
+    display: flex;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .ops1 {
+    display: flex;
+
+    align-items: center;
+    img {
+      width: 12px;
+      height: 12px;
+      margin: 0 6px;
+      cursor: pointer;
+    }
+  }
+  .ops2 {
+    display: flex;
+    align-items: center;
+    img {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+  }
+}
 .resultPane {
   overflow-x: auto;
   overflow-y: auto;
   //overflow-y 宽度
-  &::-webkit-scrollbar {
-    display: block;
+  border-top: 1px solid #c7d8ee;
+
+  height: calc(100% - 100px);
+  .resultTable {
+    border-collapse: collapse;
+    th {
+      // border: 1px solid #c7d8ee;
+      border-left: 1px solid #c7d8ee;
+      padding: 2px 8px;
+      font-size: 14px;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      background-color: #f4f7fa;
+      border-bottom: 1px solid #c7d8ee;
+    }
+    td {
+      color: #666666;
+      font-size: 14px;
+      border: 1px solid #c7d8ee;
+      padding: 4px 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+    }
+    td:first-child,
+    th:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background-color: #f4f7fa;
+      border: none;
+      border-bottom: 1px solid #c7d8ee;
+    }
+    th:first-child {
+      z-index: 2;
+    }
   }
+}
+.output {
+  border: 1px solid #c7d8ee;
   height: 100%;
+  overflow: auto;
+  padding: 0 8px;
+  font-size: 15px;
 }
 </style>
 <style lang="scss">

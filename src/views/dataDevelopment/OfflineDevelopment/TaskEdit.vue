@@ -60,11 +60,11 @@
         <img class="nodeimg" src="/static/icons/shell.svg" />
         <span class="rightBarTit">SHELL</span>
       </div>
-      <div class="nodeTitle rightBarTit undone">控制节点</div>
-      <div class="nodebox undone">
+      <div class="nodeTitle undone rightBarTit">控制节点</div>
+      <div class="nodebox undone" data-type="ifNode">
         <img class="drag" src="/static/icons/drag.svg" />
         <img class="nodeimg" src="/static/icons/select.svg" />
-        <span class="rightBarTit">选择节点</span>
+        <span class="rightBarTit">判断节点</span>
       </div>
       <div class="nodebox undone" data-type="dataTransfer">
         <img class="drag" src="/static/icons/drag.svg" />
@@ -138,8 +138,6 @@ async function getLiteflowRuler() {
 }
 let nodeItem = null
 let graph, dnd
-const nodeIdToId = new Map()
-
 function graphInit() {
   graph = new Graph({
     container: document.getElementById('graphContainer'),
@@ -160,8 +158,8 @@ function graphInit() {
       allowEdge: true,
       allowPort: true,
       highlight: true,
-      createEdge() {
-        let edge = this.createEdge({
+      createEdge({ sourceCell, sourceMagnet }) {
+        const edgeD = {
           shape: 'data-processing-curve',
           attrs: {
             line: {
@@ -170,7 +168,31 @@ function graphInit() {
               strokeWidth: 1,
             },
           },
-        })
+          label: {},
+        }
+        if (sourceCell.shape === 'ifNode') {
+          edgeD.label = {
+            attrs: {
+              text: {
+                text: 'hello',
+              },
+              rect: {
+                ref: 'label',
+                fill: 'transparent',
+              },
+            },
+          }
+          if (
+            sourceMagnet.getAttribute('port-group') === 'rOut' ||
+            sourceMagnet.getAttribute('port-group') === 'lOut'
+          ) {
+            edgeD.label.attrs.text.text = '否'
+            edgeD.shape = 'parallelConnector'
+          } else if (sourceMagnet.getAttribute('port-group') === 'bOut') {
+            edgeD.label.attrs.text.text = '是'
+          }
+        }
+        let edge = this.createEdge(edgeD)
         return edge
       },
       validateMagnet({ magnet }) {
@@ -356,6 +378,30 @@ function startDrag(e) {
           {
             id: 'out',
             group: 'out',
+          },
+        ],
+      },
+    }
+  } else if (type === 'ifNode') {
+    nodeJson = {
+      shape: 'ifNode',
+      ports: {
+        items: [
+          {
+            id: 'in',
+            group: 'in',
+          },
+          {
+            id: 'bOut',
+            group: 'bOut',
+          },
+          {
+            id: 'lOut',
+            group: 'lOut',
+          },
+          {
+            id: 'rOut',
+            group: 'rOut',
           },
         ],
       },

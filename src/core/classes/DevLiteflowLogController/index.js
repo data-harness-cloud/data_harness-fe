@@ -27,7 +27,7 @@ export default class extends BaseApiTableController {
     }
     args.handleOptions = {
       InfoWidget: InfoWidget,
-      area: '1000px',
+      area: '96%',
     }
 
     super(args)
