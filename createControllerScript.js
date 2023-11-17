@@ -48,21 +48,6 @@ export default class ${controllerName}Controller {
 }
 `
 
-fs.access(filePath, fs.constants.F_OK, (err) => {
-  if (!err) {
-    console.error(`文件 ${filePath} 已存在`)
-    process.exit(1)
-  }
-  // 创建文件
-  fs.writeFile(filePath, fileContent, function (err) {
-    if (err) {
-      console.error('创建文件失败')
-      process.exit(1)
-    }
-    console.log(`成功创建文件 ${filePath}`)
-    writeIndex()
-  })
-})
 function writeIndex() {
   const indexPath = path.join('./src/api/index.js')
   fs.readFile(indexPath, 'utf8', (err, data) => {
@@ -108,4 +93,155 @@ function writeIndex() {
       console.log(`成功在 ${indexPath} 中插入新内容`)
     })
   })
+}
+
+const controContent = `
+import BaseApiTableController from '@/core/classes/base/BaseApiTableController'
+import { ${controllerName}Controller } from '@/api/index'
+import InfoWidget from './components/InfoWidget.vue'
+export default class extends BaseApiTableController {
+  constructor(args = {}) {
+    if (!args.apiController) {
+      args.apiController = ${controllerName}Controller
+    }
+    if (!args.apiKey) {
+      args.apiKey = '${interFace}Dto'
+    }
+    if (!args.colKeys) {
+      args.colKeys = [
+        {
+          name: '名称',
+          key: 'showName',
+        },
+      ]
+    }
+    args.handleOptions = {
+      InfoWidget: InfoWidget,
+      area: '400px',
+    }
+
+    super(args)
+  }
+}
+`
+const widgetContent = `
+<template>
+  <div class="info-widget">
+    <el-form v-if="state.formData" ref="elFormRef" :model="state.formData" :rules="state.rules" label-width="100px">
+      <el-form-item label="名称" prop="showName">
+        <el-input v-if="mode === 'edit'" v-model="state.formData.showName" placeholder="请输入"></el-input>
+        <span v-else>{{ state.formData.showName }}</span>
+      </el-form-item>
+      <el-row v-if="mode === 'edit'" class="no-scroll flex-box" type="flex" justify="end" style="margin-top: 24px">
+        <el-button type="primary" :plain="true" size="large" @click="handleCancel(false)"> 取消 </el-button>
+        <el-button type="primary" size="large" @click="handleSubmit"> 提交 </el-button>
+      </el-row>
+    </el-form>
+  </div>
+</template>
+
+<script setup>
+import { getCurrentInstance } from 'vue'
+
+const { proxy } = getCurrentInstance()
+const props = defineProps({
+  observer: {
+    type: Object,
+    required: true,
+  },
+  mode: {
+    type: String,
+    default: 'edit',
+  },
+  defaultData: {
+    type: Object,
+    default: null,
+  },
+  defaultOptions: {
+    type: Object,
+    default: null,
+  },
+})
+
+const state = reactive({
+  dataExample: {
+    showName: '',
+  },
+  formData: null,
+  memberIdList: [],
+  rules: {
+    showName: [{ required: true, message: '必须选择', trigger: 'blur' }],
+  },
+})
+state.formData = Object.assign({}, state.dataExample, props.defaultData)
+
+onMounted(() => {
+
+})
+
+const handleCancel = (isSuccess = false) => {
+  let pStart = Promise.resolve()
+  if (props.observer != null) {
+    pStart = pStart.then(() => {
+      return props.observer?.cancel(isSuccess, state.formData)
+    })
+  }
+  return pStart
+}
+
+const handleSubmit = () => {
+  proxy.$refs['elFormRef'].validate((valid) => {
+    if (!valid) return
+    handleCancel(true)
+  })
+}
+</script>
+
+<style scoped lang="scss">
+</style>
+`
+
+async function writeContro() {
+  const controPath = `./src/core/classes/${controllerName}Controller/index.js`
+  await fs.mkdirSync(`./src/core/classes/${controllerName}Controller`, { recursive: true })
+  await fs.mkdirSync(`./src/core/classes/${controllerName}Controller/components`, { recursive: true })
+  fs.writeFile(controPath, controContent, (err) => {
+    if (err) {
+      console.error(err)
+      process.exit(1)
+    }
+    console.log(`成功在 ${controPath} 中插入新内容`)
+  })
+
+  const widgetPath = `./src/core/classes/${controllerName}Controller/components/InfoWidget.vue`
+  fs.writeFile(widgetPath, widgetContent, (err) => {
+    if (err) {
+      console.error(err)
+      process.exit(1)
+    }
+    console.log(`成功在 ${widgetPath} 中插入新内容`)
+  })
+}
+
+fs.access(filePath, fs.constants.F_OK, (err) => {
+  if (!err) {
+    console.error(`文件 ${filePath} 已存在`)
+    return
+  }
+  // 创建文件
+  fs.writeFile(filePath, fileContent, function (err) {
+    if (err) {
+      console.error('创建文件失败')
+      return
+    }
+    console.log(`成功创建文件 ${filePath}`)
+    writeIndex()
+  })
+})
+
+if (process.argv.length > 2) {
+  const contro = process.argv[3]
+  if (contro === '-contro' || contro === '--contro' || contro === '-c' || contro === '-C') {
+    writeContro()
+  }
 }

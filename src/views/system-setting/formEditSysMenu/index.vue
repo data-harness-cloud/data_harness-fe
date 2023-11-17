@@ -454,9 +454,9 @@ function onSubmit() {
           params.sysMenuDto.parentId = undefined
         }
         if ([SysMenuType.MENU, SysMenuType.BUTTON, SysMenuType.FRAGMENT].indexOf(params.sysMenuDto.menuType) !== -1) {
-          let tempList = permCodeTree.value.getHalfCheckedKeys()
-          tempList = tempList.concat(permCodeTree.value.getCheckedKeys())
-          params.permCodeIdListString = tempList.join(',')
+          // let tempList = permCodeTree.value.getHalfCheckedKeys()
+          // tempList = tempList.concat(permCodeTree.value.getCheckedKeys())
+          // params.permCodeIdListString = tempList.join(',')
         }
         if (isEdit.value) {
           SystemController.updateMenu(http, params)

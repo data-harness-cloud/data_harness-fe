@@ -47,15 +47,16 @@
         <div class="sqlPane" v-if="selectedObj.result">
           <div class="resultTags">
             <div class="tabPane" :class="{ tabPaneAct: !selectResult }" @click="selectResult = null">输出</div>
-            <div
-              v-for="(res, index) in selectedObj.result"
-              :key="res.sql"
-              class="tabPane"
-              :class="{ tabPaneAct: selectResult?.id === res.id }"
-              @click="selectResult = res"
-            >
-              结果{{ index + 1 }}
-            </div>
+            <template v-for="(res, index) in selectedObj.result" :key="res.sql">
+              <div
+                v-if="res && res.type == 'select'"
+                class="tabPane"
+                :class="{ tabPaneAct: selectResult?.id === res.id }"
+                @click="selectResult = res"
+              >
+                结果{{ index + 1 }}
+              </div>
+            </template>
           </div>
 
           <div class="sqlBox" v-if="selectResult && selectResult.type == 'select' && selectResult.data">
@@ -109,7 +110,7 @@
                 <span style="color: #64c37d; margin-right: 6px">{{ res.database }} > </span>
                 <span style="color: #5161db">{{ res.sql }}</span>
               </div>
-              <div class="mt2">{{ res.message }}</div>
+              <div class="mt2" :style="{ color: res.isSuccess ? 'black' : 'red' }">{{ res.message }}</div>
             </template>
           </div>
         </div>
@@ -128,7 +129,6 @@ import http from '@/core/http/index'
 import { ElMessage } from 'element-plus'
 import { SqlController } from './SqlController'
 import useUserStore from '@/store/modules/user'
-import { index } from '@antv/x6-common/lib/dom/elem'
 
 const userStore = useUserStore()
 let monacoEditor
@@ -186,11 +186,12 @@ function initMonaco() {
     minimap: {
       enabled: false,
     },
+    folding: false,
   })
 }
 const consoleController = new ConsoleController()
 const selectResult = ref(null)
-const result = ref([])
+const result = reactive([])
 async function runSQL() {
   if (!selectedObj.value.queryDatabase) {
     ElMessage.error('请选择数据源')
@@ -202,7 +203,9 @@ async function runSQL() {
     ElMessage.error('请选择要执行的sql')
     return
   }
+  selectResult.value = null
   const sqlStrings = str.split(';')
+  console.log(sqlStrings)
   for (let i = 0; i < sqlStrings.length; i++) {
     if (!sqlStrings[i]) continue
     const sqlController = new SqlController({
@@ -212,10 +215,10 @@ async function runSQL() {
       id: i + 1,
       result: result,
     })
-    sqlController.execute()
     selectedObj.value.result.push(sqlController)
+    await sqlController.execute()
+    if (sqlController.type === 'select') selectResult.value = sqlController
   }
-  selectResult.value = selectedObj.value.result[0]
 }
 
 function saveDev() {

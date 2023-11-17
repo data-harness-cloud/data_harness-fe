@@ -57,6 +57,7 @@ function initMonaco() {
     minimap: {
       enabled: false,
     },
+    folding: false,
   })
   monacoEditor.onDidChangeModelContent((e) => {
     const value = monacoEditor.getValue()

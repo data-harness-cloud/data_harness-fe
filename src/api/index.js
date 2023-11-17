@@ -54,6 +54,7 @@ import DevConsoleController from './Controller/DevConsoleController.js'
 import RemoteHostController from './Controller/RemoteHostController.js'
 import SeatunnelConfigController from './Controller/SeatunnelConfigController.js'
 import DevLiteflowLogController from './Controller/DevLiteflowLogController.js'
+import CustomizeRouteController from './Controller/CustomizeRouteController.js'
 
 export {
   SystemController,
@@ -112,4 +113,5 @@ export {
  RemoteHostController,
  SeatunnelConfigController,
  DevLiteflowLogController,
+ CustomizeRouteController,
 }
