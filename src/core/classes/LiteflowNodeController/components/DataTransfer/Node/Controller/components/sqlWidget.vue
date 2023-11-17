@@ -100,6 +100,7 @@ function initMonaco() {
     minimap: {
       enabled: false,
     },
+    folding: false,
   })
 }
 

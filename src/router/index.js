@@ -117,7 +117,6 @@ export const constantRoutes = [
           svgIcon: 'm1_6',
         },
       },
-
       {
         path: 'data-model',
         name: 'data-model',
@@ -145,7 +144,6 @@ export const constantRoutes = [
           },
         ],
       },
-
       {
         path: 'standard-plan',
         name: 'standard-plan',
@@ -175,7 +173,6 @@ export const constantRoutes = [
           },
         ],
       },
-
       {
         path: 'index-manage',
         name: 'index-manage',
@@ -183,7 +180,6 @@ export const constantRoutes = [
         meta: {
           title: '指标管理',
           svgIcon: 'm2_2',
-          hidden: true,
         },
       },
       {
@@ -234,6 +230,28 @@ export const constantRoutes = [
         meta: {
           title: '任务列表',
           svgIcon: 'm3_3',
+        },
+      },
+    ],
+  },
+  {
+    path: '/data-service',
+    name: 'data-service',
+    redirect: { name: 'data-plan' },
+    meta: {
+      title: '数据服务',
+      svgIcon: 'dataServices',
+    },
+    component: Layout,
+    children: [
+      {
+        path: 'api-management',
+        name: 'api-management',
+        component: () => import('@/views/data-service/api-management/index.vue'),
+        meta: {
+          title: 'API管理',
+          split: '数据服务',
+          svgIcon: 'm3_1',
         },
       },
     ],

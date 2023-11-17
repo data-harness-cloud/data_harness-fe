@@ -23,7 +23,7 @@ export class SqlController {
   }
   async execute() {
     if (this.type === 'select') {
-      this.executeSelect()
+      await this.executeSelect()
       return
     }
 
@@ -31,13 +31,21 @@ export class SqlController {
     this.data.value = await this.sendRequest(this.sql)
 
     const diffTime = dayjs() - start
-    this.result.value.push({
+
+    const msg = {
       database: this.databaseName,
       sql: this.sql,
-      message: `[${start.format('YYYY-MM-DD HH:mm:ss')}] 在${diffTime}ms中，有${
+      isSuccess: this.data.value.isSuccess,
+    }
+    if (this.data.value.isSuccess) {
+      msg.message = `[${start.format('YYYY-MM-DD HH:mm:ss')}] 在${diffTime}ms中，有${
         this.data.value.updateResultData
-      }受到影响`,
-    })
+      }受到影响`
+    } else {
+      msg.message = `[${start.format('YYYY-MM-DD HH:mm:ss')}] 失败。${this.data.value.message}`
+    }
+
+    this.result.push(msg)
   }
   async executeSelect() {
     const start = dayjs()
@@ -47,15 +55,23 @@ export class SqlController {
     }
     this.data.value = await this.sendRequest(sql)
 
-    console.log('this', this)
+    console.log('this', this.result)
     const diffTime = dayjs() - start
-    this.result.value.push({
+
+    const msg = {
       database: this.databaseName,
       sql: this.sql,
-      message: `[${start.format('YYYY-MM-DD HH:mm:ss')}] 在${diffTime}ms内，检索第${
+      isSuccess: this.data.value.isSuccess,
+    }
+    if (this.data.value.isSuccess) {
+      msg.message = `[${start.format('YYYY-MM-DD HH:mm:ss')}] 在${diffTime}ms内，检索第${
         this.currentpage * this.pageSize
-      }到${(this.currentpage + 1) * this.pageSize}条数据。`,
-    })
+      }到${(this.currentpage + 1) * this.pageSize}条数据。`
+    } else {
+      msg.message = `[${start.format('YYYY-MM-DD HH:mm:ss')}] 失败。${this.data.value.message}`
+    }
+
+    this.result.push(msg)
   }
   sendRequest(sql) {
     return ProjectEngineController.executeSql(
