@@ -254,6 +254,15 @@ export const constantRoutes = [
           svgIcon: 'm3_1',
         },
       },
+      {
+        path: 'app-management',
+        name: 'app-management',
+        component: () => import('@/views/data-service/app-management/index.vue'),
+        meta: {
+          title: '应用管理',
+          svgIcon: 'm3_1',
+        },
+      },
     ],
   },
   {

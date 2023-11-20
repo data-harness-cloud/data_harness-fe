@@ -24,9 +24,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="执行sql" prop="sqlScript">
+        <el-input v-show="false"></el-input>
         <div id="monaco"></div>
       </el-form-item>
       <el-form-item label="参数" prop="parameter">
+        <el-input v-show="false"></el-input>
         <el-table :data="parameter" style="width: 100%">
           <el-table-column prop="name" label="参数名" width="120"> </el-table-column>
           <el-table-column prop="type" label="类型" width="110">

@@ -23,10 +23,9 @@
 </template>
 
 <script setup>
+import { CustomizeRouteController } from '@/api/index'
 import * as monaco from 'monaco-editor'
 import http from '@/core/http/index'
-import { language as sqlLanguage } from 'monaco-editor/esm/vs/basic-languages/sql/sql.js'
-
 const props = defineProps({
   observer: {
     type: Object,
@@ -66,44 +65,31 @@ const vv = {}
 parameter.value.forEach((item) => {
   vv[item.name] = ''
 })
-;(vv.pageParam = {
+vv.pageParam = {
   pageNum: 1,
   pageSize: 10,
-}),
-  function send() {}
-let monacoEditor
-function initMonaco() {
-  monaco.languages.registerCompletionItemProvider('sql', {
-    provideCompletionItems: (model, position) => {
-      let suggestions = []
-      const { lineNumber, column } = position
-      const textBeforePointer = model.getValueInRange({
-        startLineNumber: lineNumber,
-        startColumn: 0,
-        endLineNumber: lineNumber,
-        endColumn: column,
-      })
-      const contents = textBeforePointer.trim().split(/\s+/)
-      const lastContents = contents[contents?.length - 1] // 获取最后一段非空字符串
-      if (lastContents) {
-        const sqlConfigKey = ['builtinFunctions', 'keywords', 'operators']
-        sqlConfigKey.forEach((key) => {
-          sqlLanguage[key].forEach((sql) => {
-            suggestions.push({
-              label: sql, // 显示的提示内容;默认情况下，这也是选择完成时插入的文本。
-              insertText: sql, // 选择此完成时应插入到文档中的字符串或片段
-            })
-          })
-        })
-      }
-      return {
-        suggestions,
-      }
-    },
+}
+function send() {
+  CustomizeRouteController.testCustomizeRoute(http, {
+    id: state.formData.id,
+    params: JSON.parse(monacoEditor.getValue()),
+  }).then((res) => {
+    console.log('执行结果', res)
+    if (!resEditor) {
+      resEditor = initMonaco('monaco2')
+    }
+    resEditor.setValue(JSON.stringify(res))
+    setTimeout(() => {
+      resEditor.trigger(null, 'editor.action.formatDocument')
+    }, 17)
   })
-  monacoEditor = monaco.editor.create(document.getElementById('monaco3'), {
-    value: JSON.stringify(vv),
-    language: 'sql',
+}
+let monacoEditor
+let resEditor
+function initMonaco(ele) {
+  const editor = monaco.editor.create(document.getElementById(ele), {
+    value: '',
+    language: 'json',
     roundedSelection: false,
     scrollBeyondLastLine: false,
     automaticLayout: true, // 自动布局
@@ -115,9 +101,15 @@ function initMonaco() {
     },
     folding: false,
   })
+
+  return editor
 }
 onMounted(() => {
-  initMonaco()
+  monacoEditor = initMonaco('monaco3')
+  monacoEditor.setValue(JSON.stringify(vv))
+  setTimeout(() => {
+    monacoEditor.trigger(null, 'editor.action.formatDocument')
+  }, 17)
 })
 </script>
 
