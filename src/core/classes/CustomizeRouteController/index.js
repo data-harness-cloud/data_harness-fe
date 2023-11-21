@@ -55,7 +55,7 @@ export default class extends BaseApiTableController {
         '测试API',
         testCustomizeRoute,
         {
-          area: '1000px',
+          area: '90%',
         },
         props
       )

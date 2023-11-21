@@ -35,9 +35,9 @@ export class SqlController {
     const msg = {
       database: this.databaseName,
       sql: this.sql,
-      isSuccess: this.data.value.isSuccess,
+      success: this.data.value.success,
     }
-    if (this.data.value.isSuccess) {
+    if (this.data.value.success) {
       msg.message = `[${start.format('YYYY-MM-DD HH:mm:ss')}] 在${diffTime}ms中，有${
         this.data.value.updateResultData
       }受到影响`
@@ -61,9 +61,9 @@ export class SqlController {
     const msg = {
       database: this.databaseName,
       sql: this.sql,
-      isSuccess: this.data.value.isSuccess,
+      success: this.data.value.success,
     }
-    if (this.data.value.isSuccess) {
+    if (this.data.value.success) {
       msg.message = `[${start.format('YYYY-MM-DD HH:mm:ss')}] 在${diffTime}ms内，检索第${
         this.currentpage * this.pageSize
       }到${(this.currentpage + 1) * this.pageSize}条数据。`
