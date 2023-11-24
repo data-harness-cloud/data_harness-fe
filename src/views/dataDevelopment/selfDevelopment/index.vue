@@ -210,7 +210,7 @@ async function runSQL() {
     if (!sqlStrings[i]) continue
     const sqlController = new SqlController({
       sql: sqlStrings[i],
-      databaseName: selectedObj.value.queryDatabase,
+      database: selectedObj.value.queryDatabase,
       projectId: userStore.projectId,
       id: i + 1,
       result: result,

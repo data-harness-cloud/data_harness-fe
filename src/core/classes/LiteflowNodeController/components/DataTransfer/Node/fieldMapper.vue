@@ -32,7 +32,7 @@
 import { inject, onMounted, getCurrentInstance } from 'vue'
 import DataTransferController from './Controller/DataTransferController'
 import { ElMessage } from 'element-plus'
-import { getNodeGenealogyByNode } from './utils'
+import { getNodeGenealogyByNode } from './x6Init'
 const dataTransferController = new DataTransferController()
 const getNode = inject('getNode')
 const node = getNode()

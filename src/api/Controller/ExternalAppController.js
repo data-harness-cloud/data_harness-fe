@@ -59,4 +59,7 @@ export default class ExternalAppController {
       httpOption
     )
   }
+  static generateAppKey(sender, params, axiosOption, httpOption) {
+    return sender.doUrl('/admin/app/externalApp/generateAppKey', 'get', params, axiosOption, httpOption)
+  }
 }

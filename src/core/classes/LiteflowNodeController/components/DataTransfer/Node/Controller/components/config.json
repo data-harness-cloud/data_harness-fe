@@ -1,0 +1,107 @@
+{
+  "source": [
+    {
+      "type": "MySQL",
+      "plugin_name": "Jdbc",
+      "driver": "com.mysql.cj.jdbc.Driver",
+      "mode": "BATCH",
+      "canCDC": true
+    },
+    {
+      "type": "MySQL-CDC",
+      "plugin_name": "MySQL-CDC",
+      "mode": "STREAM",
+      "requiredFields": ["table-names", "base-url"],
+      "isCDC": true
+    },
+    {
+      "type": "PostgreSQL",
+      "plugin_name": "Jdbc",
+      "driver": "org.postgresql.Driver",
+      "mode": "BATCH"
+    },
+    {
+      "type": "Oracle",
+      "plugin_name": "Jdbc",
+      "driver": "oracle.jdbc.OracleDriver",
+      "mode": "BATCH"
+    },
+    {
+      "type": "SqlServer",
+      "plugin_name": "Jdbc",
+      "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+      "mode": "BATCH",
+      "canCDC": true
+    },
+    {
+      "type": "SqlServer-CDC",
+      "plugin_name": "SqlServer-CDC",
+      "mode": "STREAM",
+      "requiredFields": ["database-names", "table-names", "base-url"],
+      "isCDC": true
+    },
+    {
+      "type": "Clickhouse",
+      "plugin_name": "Clickhouse",
+      "mode": "BATCH",
+      "requiredFields": ["host"]
+    },
+    {
+      "type": "Hive",
+      "plugin_name": "Hive",
+      "mode": "BATCH",
+      "requiredFields": ["metastore_uri"]
+    }
+  ],
+  "sink": [
+    {
+      "type": "MySQL",
+      "plugin_name": "Jdbc",
+      "driver": "com.mysql.cj.jdbc.Driver",
+      "mode": "BATCH",
+      "canCDC": true
+    },
+    {
+      "type": "MySQL-CDC",
+      "plugin_name": "MySQL-CDC",
+      "mode": "STREAM",
+      "requiredFields": ["table-names", "base-url", "server-id"]
+    },
+    {
+      "type": "PostgreSQL",
+      "plugin_name": "Jdbc",
+      "driver": "org.postgresql.Driver",
+      "mode": "BATCH"
+    },
+    {
+      "type": "Oracle",
+      "plugin_name": "Jdbc",
+      "driver": "oracle.jdbc.OracleDriver",
+      "mode": "BATCH"
+    },
+    {
+      "type": "SqlServer",
+      "plugin_name": "Jdbc",
+      "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
+      "mode": "BATCH"
+    },
+    {
+      "type": "Clickhouse",
+      "plugin_name": "Clickhouse",
+      "mode": "BATCH",
+      "requiredFields": ["host"]
+    },
+    {
+      "type": "Hive",
+      "plugin_name": "Hive",
+      "mode": "BATCH",
+      "requiredFields": ["metastore_uri"]
+    },
+    {
+      "type": "Doris",
+      "plugin_name": "Doris",
+      "canCDC": true,
+      "requiredFields": ["fenodes", "table.identifier", "sink.label-prefix"]
+    }
+  ]
+}

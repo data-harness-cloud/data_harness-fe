@@ -16,10 +16,6 @@ export default class ProjectController extends BaseApiTableController {
           key: 'datasourceName',
         },
         {
-          name: '显示名称',
-          key: 'datasourceShowName',
-        },
-        {
           name: '类型',
           key: 'datasourceType',
           width: '120px',

@@ -74,7 +74,7 @@ import * as monaco from 'monaco-editor'
 import http from '@/core/http/index'
 import { language as sqlLanguage } from 'monaco-editor/esm/vs/basic-languages/sql/sql.js'
 import useUserStore from '@/store/modules/user'
-
+import { deepClone } from '@/core/js/$'
 const userStore = useUserStore()
 const { proxy } = getCurrentInstance()
 const props = defineProps({
@@ -124,8 +124,7 @@ const state = reactive({
 })
 state.formData = Object.assign({}, state.dataExample, props.defaultData)
 const parameter = ref(JSON.parse(state.formData.parameter))
-state.formData.url = state.formData.url.slice(4)
-console.log(state.formData)
+state.formData.url = state.formData.url.slice(5)
 function setParameter(content) {
   const regex = /\${(.*?)}/g
   const matches = []
@@ -160,8 +159,6 @@ function setParameter(content) {
       i--
     }
   }
-
-  console.log(parameter.value)
 }
 
 const databases = ref(null)
@@ -228,8 +225,14 @@ function initMonaco() {
   })
 }
 function testCustomizeRoute() {
-  state.formData.parameter = JSON.stringify(parameter.value)
-  props.defaultController.handleTestCustomizeRoute(state.formData)
+  const obj = deepClone(state.formData)
+  obj.parameter = JSON.stringify(parameter.value)
+  obj.sqlScript = monacoEditor.getValue()
+  obj.url = '/api/' + obj.url
+  console.log(obj)
+  props.defaultController.update(obj).then((res) => {
+    props.defaultController.handleTestCustomizeRoute(obj)
+  })
 }
 
 onMounted(() => {
@@ -243,7 +246,7 @@ const handleCancel = (isSuccess = false) => {
     pStart = pStart.then(() => {
       state.formData.parameter = JSON.stringify(parameter.value)
       state.formData.sqlScript = monacoEditor.getValue()
-      state.formData.url = 'api/' + state.formData.url
+      state.formData.url = '/api/' + state.formData.url
       return props.observer?.cancel(isSuccess, state.formData)
     })
   }

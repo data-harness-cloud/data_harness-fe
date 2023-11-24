@@ -66,7 +66,8 @@ import { Graph, Shape, Color, Path, Cell, Edge } from '@antv/x6'
 import { Dnd } from '@antv/x6-plugin-dnd'
 import http from '@/core/http/index'
 import { Selection } from '@antv/x6-plugin-selection'
-import { NodeRegister, getNodeOrder, GenerateSeaTunnelConfig } from './Node/utils'
+import { GenerateSeaTunnelConfig } from './Node/utils'
+import { getNodeOrder, NodeRegister } from './Node/x6Init'
 import { ElMessage } from 'element-plus'
 import LiteflowRulerController from '@/core/classes/LiteflowRulerController'
 import ContentedTitle from '@/components/ContentedTitle/index.vue'
@@ -99,7 +100,6 @@ state.formData = Object.assign({}, state.dataExample, props.defaultData)
 let nodeItem = null
 let graph, dnd
 let env = {
-  'job.mode': 'BATCH',
   parallelism: 1,
 }
 

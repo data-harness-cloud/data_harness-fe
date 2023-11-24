@@ -4,7 +4,7 @@
       <div class="url">
         <div class="requestType">{{ state.formData.requestType === 1 ? 'GET' : 'POST' }}</div>
         <el-divider direction="vertical" />
-        <div class="text">{{ 'api/' + state.formData.url }}</div>
+        <div class="text">{{ state.formData.url }}</div>
       </div>
 
       <el-button type="primary" size="large" @click="send">发送</el-button>
@@ -76,17 +76,17 @@ function send() {
   }).then((res) => {
     console.log('执行结果', res)
     if (!resEditor) {
-      resEditor = initMonaco('monaco2')
+      resEditor = initMonaco('monaco2', true)
     }
     resEditor.setValue(JSON.stringify(res))
     setTimeout(() => {
       resEditor.trigger(null, 'editor.action.formatDocument')
-    }, 17)
+    }, 100)
   })
 }
 let monacoEditor
 let resEditor
-function initMonaco(ele) {
+function initMonaco(ele, flag = false) {
   const editor = monaco.editor.create(document.getElementById(ele), {
     value: '',
     language: 'json',
@@ -99,7 +99,7 @@ function initMonaco(ele) {
     minimap: {
       enabled: false,
     },
-    folding: false,
+    folding: flag,
   })
 
   return editor
@@ -109,7 +109,7 @@ onMounted(() => {
   monacoEditor.setValue(JSON.stringify(vv))
   setTimeout(() => {
     monacoEditor.trigger(null, 'editor.action.formatDocument')
-  }, 17)
+  }, 34)
 })
 </script>
 

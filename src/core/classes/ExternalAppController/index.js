@@ -62,16 +62,62 @@ export default class extends BaseApiTableController {
       {}
     )
     if (this.handleOptions) {
-      return this.$dialog.show(
-        '绑定API',
-        BindAPiWidget,
-        {
-          area: '700px',
-        },
-        props
-      )
+      return this.$dialog
+        .show(
+          '绑定API',
+          BindAPiWidget,
+          {
+            area: '600px',
+          },
+          props
+        )
+        .then((res) => {
+          return res
+        })
     } else {
       return Promise.resolve()
+    }
+  }
+
+  handleAdd(row = {}, options = {}) {
+    return super.handleAdd(row, options).then((formData) => {
+      this.addCustomizeRoute(formData)
+      return formData
+    })
+  }
+
+  handleUpdate(row, options = {}) {
+    return super.handleUpdate(row, options).then((formData) => {
+      this.addCustomizeRoute(formData)
+      return formData
+    })
+  }
+  async addCustomizeRoute(formData) {
+    const addList = formData.bindingApiList.filter((v) => !formData.originalApiList.includes(v))
+    const deleteList = formData.originalApiList.filter((v) => !formData.bindingApiList.includes(v))
+    if (addList.length !== 0) {
+      await this.$apiController
+        .addExternalAppCustomizeRoute(http, {
+          externalAppCustomizeRouteDtoList: addList.map((v) => ({
+            customizeRouteId: v,
+            externalAppId: formData.id,
+          })),
+          externalAppId: formData.id,
+        })
+        .then((res) => {
+          console.log('添加关联路由', res)
+        })
+    }
+
+    for (let i = 0; i < deleteList.length; i++) {
+      await this.$apiController
+        .deleteExternalAppCustomizeRoute(http, {
+          customizeRouteId: deleteList[i],
+          externalAppId: formData.id,
+        })
+        .then((res) => {
+          console.log('删除关联路由', res)
+        })
     }
   }
 }
