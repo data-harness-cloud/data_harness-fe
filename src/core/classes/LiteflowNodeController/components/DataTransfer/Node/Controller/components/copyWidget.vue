@@ -106,7 +106,7 @@ const nodeTag = ref(null)
 async function setTarget() {
   const targetnode = props.nodes.endNodes.find((item) => item.nodeTag === nodeTag.value)
   state.formData.sink = targetnode
-  if (!targetnode.databaseName) {
+  if (!targetnode.database) {
     ElMessage.error('数据目标未配置')
   } else {
     nodeTag.value = targetnode.nodeTag
@@ -140,7 +140,7 @@ onMounted(async () => {
   }
 
   if (state.formData.source) {
-    if (!state.formData.source.databaseName) {
+    if (!state.formData.source.database) {
       ElMessage.error('数据来源未配置')
     } else {
       const sourceTableFields = await queryTableFields(state.formData.source)
@@ -150,7 +150,7 @@ onMounted(async () => {
     ElMessage.warning('数据来源未链接')
   }
   if (state.formData.sink) {
-    if (!state.formData.sink.databaseName) {
+    if (!state.formData.sink.database) {
       ElMessage.error('数据目标未配置')
     } else {
       nodeTag.value = state.formData.sink.nodeTag

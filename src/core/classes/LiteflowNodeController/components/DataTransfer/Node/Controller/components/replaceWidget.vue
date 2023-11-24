@@ -101,7 +101,7 @@ onMounted(async () => {
   }
 
   if (state.formData.source) {
-    if (!state.formData.source.databaseName) {
+    if (!state.formData.source.database) {
       ElMessage.error('数据来源未配置')
     } else {
       const sourceTableFields = await queryTableFields(state.formData.source)

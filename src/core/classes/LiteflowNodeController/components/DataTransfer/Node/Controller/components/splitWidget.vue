@@ -100,7 +100,7 @@ onMounted(async () => {
   }
 
   if (state.formData.source) {
-    if (!state.formData.source.databaseName) {
+    if (!state.formData.source.database) {
       ElMessage.error('数据来源未配置')
     } else {
       const sourceTableFields = await queryTableFields(state.formData.source)
@@ -110,7 +110,7 @@ onMounted(async () => {
     ElMessage.warning('数据来源未链接')
   }
   if (state.formData.sink) {
-    if (!state.formData.sink.databaseName) {
+    if (!state.formData.sink.database) {
       ElMessage.error('数据目标未配置')
     } else {
       const sinkTableFields = await queryTableFields(state.formData.sink)

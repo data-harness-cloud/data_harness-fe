@@ -8,7 +8,7 @@
             <span v-else>{{ state.formData.datasourceName }}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <!-- <el-col :span="24">
           <el-form-item label="显示名称" prop="datasourceShowName">
             <el-input
               v-if="mode === 'edit'"
@@ -17,7 +17,7 @@
             ></el-input>
             <span v-else>{{ state.formData.datasourceShowName }}</span>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-col :span="24">
           <el-form-item label="描述" prop="datasourceDescription">
             <el-input
@@ -46,19 +46,19 @@
         </el-col>
         <el-col :span="24">
           <el-form-item label="JSON配置" prop="datasourceContent">
-            <el-input v-model="state.formData.datasourceContent" v-show="false"></el-input>
+            <el-input v-show="false"></el-input>
             <JsonEditor
               v-if="mode === 'edit'"
-              :defaultData="state.formData.datasourceContent"
+              :defaultData="sourceContent"
               :mode="mode"
               style="width: 100%"
               @change="
                 (content) => {
-                  state.formData.datasourceContent = content?.text || ''
+                  sourceContent = content?.text || ''
                 }
               "
             ></JsonEditor>
-            <span v-else>{{ state.formData.datasourceContent }}</span>
+            <span v-else>{{ sourceContent }}</span>
           </el-form-item>
         </el-col>
       </el-row>
@@ -68,11 +68,11 @@
       >
         <div style="display: flex; align-items: center">
           <el-button @click="testLink()" style="margin: 0 8px"> 测试链接 </el-button>
-          <div v-if="state.formData.datasourceConnect" class="flCenter">
+          <div v-if="state.formData.datasourceConnect === 1" class="flCenter">
             <div class="successPoint"></div>
             <div style="color: #52c41a">链接成功</div>
           </div>
-          <div style="color: red">{{ errorMessage }}</div>
+          <div v-else-if="state.formData.datasourceConnect === -1" style="color: red">{{ errorMessage }}</div>
         </div>
         <div class="flex">
           <el-button type="primary" :plain="true" size="large" @click="handleCancel(false)"> 取消 </el-button>
@@ -118,14 +118,7 @@ const state = reactive({
     dataDeptId: 0,
     dataUserId: 0,
     datasourceConnect: 0,
-    datasourceContent: `{
-                          "databaseType": "",
-                          "databaseName": "",
-                          "ip": "",
-                          "port": "",
-                          "username": "",
-                          "password": ""
-                        }`,
+    datasourceContent: '',
     datasourceDescription: '',
     datasourceGroup: '',
     datasourceIcon: '',
@@ -138,21 +131,7 @@ const state = reactive({
   hasJsonFlag: false,
   rules: {
     datasourceName: [{ required: true, message: '不能为空', trigger: 'blur' }],
-    datasourceShowName: [{ required: true, message: '不能为空', trigger: 'blur' }],
     datasourceType: [{ required: true, message: '必须选择', trigger: 'blur' }],
-    datasourceContent: [
-      {
-        required: true,
-        validator: async (rule, value, callback) => {
-          if (value) {
-            callback()
-          } else {
-            callback(new Error('不能为空'))
-          }
-        },
-        trigger: 'blur',
-      },
-    ],
     enginePort: [
       {
         required: true,
@@ -168,25 +147,46 @@ const state = reactive({
     ],
   },
 })
+
+const sourceContent = ref(`
+{
+  "database": "",
+  "ip": "",
+  "port": "",
+  "user": "",
+  "password": ""
+}
+`)
 state.formData = Object.assign({}, state.dataExample, props.defaultData)
+if (state.formData.datasourceContent) {
+  const obj = JSON.parse(state.formData.datasourceContent)
+  obj.databaseType = undefined
+  sourceContent.value = JSON.stringify(obj)
+}
 
 const databaseTypes = dictStore.getDict('databaseType')
 
+function getContentObj() {
+  const obj = JSON.parse(sourceContent.value)
+  obj.databaseType = state.formData.datasourceType
+  return obj
+}
+
 const errorMessage = ref('')
 function testLink() {
-  DatabaseManagementController.connection(http, { databaseManagement: JSON.parse(state.formData.datasourceContent) })
+  DatabaseManagementController.connection(http, { databaseManagement: getContentObj() })
     .then((res) => {
       console.log(res)
       if (res.success) {
         state.formData.datasourceConnect = 1
       } else {
         errorMessage.value = res.errorMessage
-        state.formData.datasourceConnect = 0
+        state.formData.datasourceConnect = -1
       }
     })
     .catch((err) => {
       errorMessage.value = err.errorMessage
-      state.formData.datasourceConnect = 0
+      state.formData.datasourceConnect = -1
     })
 }
 
@@ -196,6 +196,7 @@ const handleCancel = (isSuccess = false) => {
   let pStart = Promise.resolve()
   if (props.observer != null) {
     pStart = pStart.then(() => {
+      state.formData.datasourceContent = JSON.stringify(getContentObj())
       return props.observer?.cancel(isSuccess, state.formData)
     })
   }

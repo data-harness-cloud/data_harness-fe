@@ -26,10 +26,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="表名" prop="tableName">
-          <el-select v-model="state.formData.tableName" placeholder="表名" clearable filterable @change="getFields">
-            <el-option v-for="item in dataTables" :key="item.tableName" :label="item.tableName" :value="item.tableName">
-              <span style="float: left">{{ item.tableName }}</span>
+        <el-form-item label="表名" prop="table">
+          <el-select v-model="state.formData.table" placeholder="表名" clearable filterable @change="getFields">
+            <el-option v-for="item in dataTables" :key="item.table" :label="item.table" :value="item.table">
+              <span style="float: left">{{ item.table }}</span>
               <span style="float: right; color: var(--el-text-color-secondary); font-size: 13px">
                 {{ item.remarks }}
               </span>
@@ -60,7 +60,6 @@
           <el-input v-model="state.formData.parallelism" />
         </el-form-item>
       </div>
-      <!-- <div>{{ state.formData.url || '' }}</div> -->
 
       <el-row class="no-scroll flex-box" type="flex" justify="end" style="margin-top: 24px">
         <el-button type="primary" :plain="true" size="large" @click="handleCancel(false)"> 取消 </el-button>
@@ -75,8 +74,9 @@ import ContentedTitle from '@/components/ContentedTitle/index.vue'
 import { DatabaseManagementController, ProjectDatasourceController } from '@/api/index'
 import http from '@/core/http/index'
 import businessDictStore from '@/store/modules/businessDict'
+import dataTypeConfig from './config.json'
+const sinks = dataTypeConfig.sink
 const dictStore = businessDictStore()
-
 const { proxy } = getCurrentInstance()
 const props = defineProps({
   observer: {
@@ -104,13 +104,11 @@ const props = defineProps({
 const state = reactive({
   dataExample: {
     name: '',
-    url: null,
-    driver: 'com.mysql.cj.jdbc.Driver',
     query: null,
     databaseType: '',
     databaseId: '',
-    databaseName: '',
-    tableName: '', //表名
+    database: '',
+    table: '', //表名
     parallelism: 1, //并行度
     connection_check_timeout_sec: 30, //数据库连接超时时长（秒）
     primary_keys: [],
@@ -119,7 +117,7 @@ const state = reactive({
   rules: {
     name: [{ required: true, message: '必须选择', trigger: 'blur' }],
     databaseType: [{ required: true, message: '必须选择', trigger: 'blur' }],
-    tableName: [{ required: true, message: '必须选择', trigger: 'blur' }],
+    table: [{ required: true, message: '必须选择', trigger: 'blur' }],
     databaseId: [{ required: true, message: '必须选择', trigger: 'blur' }],
     parallelism: [
       { required: true, message: '必须填写', trigger: 'blur' },
@@ -132,7 +130,7 @@ state.formData = Object.assign({}, state.dataExample, props.defaultData)
 console.log('state.formData', state.formData)
 
 const databaseTypes = dictStore.getDict('databaseType')
-
+const typeConfig = ref({})
 const databases = ref(null)
 const dataTables = ref(null)
 async function getDatabase() {
@@ -153,8 +151,10 @@ async function getDatabase() {
 let database = null
 async function changeDataBase() {
   database = JSON.parse(databases.value.find((item) => item.id === state.formData.databaseId).datasourceContent)
-  console.log('database', database)
-  state.formData.databaseName = database.datasourceName
+  state.formData.database = database.datasourceName
+  typeConfig.value = sinks.find((item) => {
+    return item.type === database.databaseType
+  })
   await getDataTable()
 }
 async function getDataTable() {
@@ -168,6 +168,11 @@ async function getDataTable() {
     null,
     { showMask: false }
   ).then((res) => {
+    if (typeConfig.value.type === 'PostgreSQL') {
+      res.data.forEach((item) => {
+        item.table = item.tableSchema + '.' + item.table
+      })
+    }
     dataTables.value = res.data
   })
 }
@@ -178,7 +183,7 @@ function getFields() {
     {
       databaseManagement: {
         ...database,
-        tableName: state.formData.tableName,
+        table: state.formData.table,
       },
     },
     null,
@@ -193,7 +198,7 @@ onMounted(async () => {
   if (props.defaultData?.databaseId) {
     await changeDataBase()
   }
-  if (props.defaultData?.tableName) {
+  if (props.defaultData?.table) {
     getFields()
   }
 })
@@ -202,12 +207,11 @@ const handleCancel = (isSuccess = false) => {
   let pStart = Promise.resolve()
   if (props.observer != null) {
     pStart = pStart.then(() => {
+      if (!isSuccess) {
+        return props.observer?.cancel(isSuccess, state.formData)
+      }
       Object.assign(state.formData, database)
-      state.formData.url = `jdbc:mysql://${database.ip}:${database.port}/${database.databaseName}`
-      // state.formData.query = generateInsertSQL(
-      //   state.formData.tableName,
-      //   fields.value.map((item) => item.fieldName)
-      // )
+      Object.assign(state.formData, typeConfig.value)
       state.formData.fieldNames = fields.value.map((item) => item.fieldName)
       console.log('state.formData', state.formData)
       return props.observer?.cancel(isSuccess, state.formData)
