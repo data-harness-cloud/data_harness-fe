@@ -57,6 +57,9 @@ import DevLiteflowLogController from './Controller/DevLiteflowLogController.js'
 import CustomizeRouteController from './Controller/CustomizeRouteController.js'
 import ExternalAppController from './Controller/ExternalAppController.js'
 import ExternalAppCustomizeRouteController from './Controller/ExternalAppCustomizeRouteController.js'
+import DefinitionIndexModelFieldRelationController from './Controller/DefinitionIndexModelFieldRelationController.js'
+import StandardQualityController from './Controller/StandardQualityController.js'
+import DataQualityCheckController from './Controller/DataQualityCheckController.js'
 
 export {
   SystemController,
@@ -118,4 +121,7 @@ export {
  CustomizeRouteController,
  ExternalAppController,
  ExternalAppCustomizeRouteController,
+ DefinitionIndexModelFieldRelationController,
+ StandardQualityController,
+ DataQualityCheckController,
 }

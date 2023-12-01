@@ -13,8 +13,7 @@ const props = defineProps({
     default: '',
   },
 })
-const emits = defineEmits(['update:modelValue'])
-
+const emits = defineEmits(['update:modelValue', 'change'])
 let monacoEditor
 function initMonaco() {
   monaco.languages.registerCompletionItemProvider('sql', {
@@ -62,6 +61,7 @@ function initMonaco() {
   monacoEditor.onDidChangeModelContent((e) => {
     const value = monacoEditor.getValue()
     emits('update:modelValue', value)
+    emits('change', value)
   })
 }
 
@@ -80,5 +80,9 @@ onBeforeUnmount(() => {
 #monaco {
   width: 100%;
   height: 100%;
+  border: 1px solid #dddddd;
+  :deep(.margin-view-overlays) {
+    background-color: #f4f7fa;
+  }
 }
 </style>

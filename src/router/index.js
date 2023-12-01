@@ -159,7 +159,6 @@ export const constantRoutes = [
             component: () => import('@/views/data-integration/standard-plan/standard-overview/index.vue'),
             meta: {
               title: '标准概览',
-
               hidden: true,
             },
           },
@@ -169,6 +168,14 @@ export const constantRoutes = [
             component: () => import('@/views/data-integration/standard-plan/standard-manage/index.vue'),
             meta: {
               title: '标准管理',
+            },
+          },
+          {
+            path: 'standard-quatity',
+            name: 'standard-quatity',
+            component: () => import('@/views/data-integration/standard-plan/standard-quatity/index.vue'),
+            meta: {
+              title: '数据质量',
             },
           },
         ],
@@ -182,16 +189,16 @@ export const constantRoutes = [
           svgIcon: 'm2_2',
         },
       },
-      {
-        path: 'dimension-manage',
-        name: 'dimension-manage',
-        component: () => import('@/views/data-integration/dimension-manage/index.vue'),
-        meta: {
-          title: '维度管理',
-          svgIcon: 'm2_1',
-          hidden: true,
-        },
-      },
+      // {
+      //   path: 'dimension-manage',
+      //   name: 'dimension-manage',
+      //   component: () => import('@/views/data-integration/dimension-manage/index.vue'),
+      //   meta: {
+      //     title: '维度管理',
+      //     svgIcon: 'm2_1',
+      //     hidden: true,
+      //   },
+      // },
     ],
   },
   {

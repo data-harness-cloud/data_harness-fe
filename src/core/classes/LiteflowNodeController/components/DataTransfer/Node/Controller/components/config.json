@@ -10,7 +10,7 @@
     {
       "type": "MySQL-CDC",
       "plugin_name": "MySQL-CDC",
-      "mode": "STREAM",
+      "mode": "STREAMING",
       "requiredFields": ["table-names", "base-url"],
       "isCDC": true
     },
@@ -36,7 +36,7 @@
     {
       "type": "SqlServer-CDC",
       "plugin_name": "SqlServer-CDC",
-      "mode": "STREAM",
+      "mode": "STREAMING",
       "requiredFields": ["database-names", "table-names", "base-url"],
       "isCDC": true
     },
@@ -61,12 +61,7 @@
       "mode": "BATCH",
       "canCDC": true
     },
-    {
-      "type": "MySQL-CDC",
-      "plugin_name": "MySQL-CDC",
-      "mode": "STREAM",
-      "requiredFields": ["table-names", "base-url", "server-id"]
-    },
+
     {
       "type": "PostgreSQL",
       "plugin_name": "Jdbc",

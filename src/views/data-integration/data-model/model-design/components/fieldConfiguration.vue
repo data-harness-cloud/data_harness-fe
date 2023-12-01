@@ -87,35 +87,29 @@
     </template>
     <template #slot-modelFieldIndex="{ scope }">
       <el-select
-        v-model="scope.row.modelFieldIndex"
-        disabled
+        v-model="scope.row.indexRelation"
         filterable
         placeholder="请选择"
+        multiple
         clearable
         style="width: 100%"
       >
-        <el-option
-          v-for="(dtype, index) in modelFieldIndexDictList"
-          :key="index + '|dictType'"
-          :label="dtype.dictName"
-          :value="dtype.dictName"
-        />
+        <el-option v-for="dtype in IndexList" :key="dtype.id" :label="dtype.indexName" :value="dtype.id" />
       </el-select>
     </template>
     <template #slot-modelFieldMetaStandard="{ scope }">
       <el-select
         v-model="scope.row.modelFieldMetaStandard"
-        disabled
         filterable
         placeholder="请选择"
         clearable
         style="width: 100%"
       >
         <el-option
-          v-for="(dtype, index) in modelFieldMetaStandardDictList"
-          :key="index + '|dictType'"
-          :label="dtype.dictName"
-          :value="dtype.dictName"
+          v-for="dtype in StandardMainList"
+          :key="dtype.standardName"
+          :label="dtype.standardName"
+          :value="dtype.id"
         />
       </el-select>
     </template>
@@ -160,11 +154,17 @@
 <script setup>
 import { Plus } from '@element-plus/icons-vue'
 import ModelDesginFieldController from '@/core/classes/modelDesginFieldController/index'
-import { BaseBusinessDictController } from '@/api/index'
+import {
+  BaseBusinessDictController,
+  DefinitionIndexModelFieldRelationController,
+  DefinitionIndexController,
+  StandardMainController,
+} from '@/api/index'
 import http from '@/core/http/index'
 import useUserStore from '@/store/modules/user'
 import { deepClone, createMd5Id, someOptFun } from '@/core/js/$'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 const router = useRouter()
 const { proxy } = getCurrentInstance()
 
@@ -194,8 +194,7 @@ BaseBusinessDictController.list(http, {
 }).then((res) => {
   modelFieldTypeDictList.value = res.data.dataList
 })
-const modelFieldIndexDictList = ref([])
-const modelFieldMetaStandardDictList = ref([])
+const StandardMainList = ref([])
 const modelFieldValueStandardDictList = ref([])
 const addDataDemo = {
   dataDeptId: 0,
@@ -220,16 +219,61 @@ const addDataDemo = {
   notSave: true,
   showOrder: 0,
   identificationCode: undefined,
+  indexRelation: [],
 }
 const userStore = useUserStore()
+
+const IndexList = ref([])
+let fieldRelation
+
+async function getStandardMainList() {
+  StandardMainController.list(http, {
+    standardMainDtoFilter: {
+      projectId: userStore.getProjectId(),
+    },
+  }).then((res) => {
+    StandardMainList.value = res.data.dataList
+  })
+}
+getStandardMainList()
+
+async function getIndexRelation() {
+  const res = await DefinitionIndexController.list(http, {
+    definitionIndexDtoFilter: {
+      projectId: userStore.getProjectId(),
+    },
+  })
+  IndexList.value = res.data.dataList
+
+  if (props.parentTableData.id) {
+    const res = await DefinitionIndexModelFieldRelationController.list(http, {
+      definitionIndexModelFieldRelationDtoFilter: {
+        modelId: props.parentTableData.id,
+      },
+    })
+    modelDesginFieldController.dataList.forEach((item) => {
+      item.indexRelation = []
+      res.data.dataList.forEach((resItem) => {
+        if (item.id === resItem.modelFieldId) {
+          item.indexRelation.push(resItem.indexId)
+        }
+      })
+      fieldRelation = res.data.dataList
+    })
+  }
+}
 getProjectMemberList()
 function getProjectMemberList() {
   const initDataList = () => {
+    modelDesginFieldController.dataList.forEach((item) => {
+      item.indexRelation = []
+    })
     if (!modelDesginFieldController.dataList.length) {
       const deepCloneData = deepClone(addDataDemo)
       deepCloneData.identificationCode = createMd5Id()
       modelDesginFieldController.dataList.push(deepCloneData)
     }
+    getIndexRelation()
   }
   if (props.parentTableData.id) {
     modelDesginFieldController.afterFilter.modelId = props.parentTableData.id
@@ -280,7 +324,6 @@ const deleteData = (row) => {
 }
 const TableTemplateRef = ref()
 const needBatchDelete = () => {
-  // console.log('modelDesginFieldController.dataList', modelDesginFieldController.dataList)
   someOptFun(modelDesginFieldController.dataList, (data) => {
     if (data.multipleSelected) {
       return modelDesginFieldController.delete(data)
@@ -306,10 +349,75 @@ const needToAdd = (data) => {
   })
   return !notNeedAdd
 }
+
+async function updataRelation(modelData) {
+  function rEqual(a, b) {
+    if (a.modelId !== b.modelId || a.modelFieldId !== b.modelFieldId || a.indexId !== b.indexId) {
+      return false
+    }
+    return true
+  }
+  function getDiff(a, b) {
+    let ans = []
+    for (let i = 0; i < a.length; i++) {
+      let flag = false
+      for (let j = 0; j < b.length; j++) {
+        if (rEqual(a[i], b[j])) {
+          flag = true
+          break
+        }
+      }
+      if (!flag) {
+        ans.push(a[i])
+      }
+    }
+    return ans
+  }
+  const res = []
+  modelDesginFieldController.dataList.forEach((field) => {
+    res.push(
+      ...field.indexRelation.map((indexId) => ({
+        modelId: modelData.id,
+        modelFieldId: field.id,
+        indexId: indexId,
+        indexProcessId: IndexList.value.find((index) => index.id === indexId).processId,
+        modelProcessId: modelData.processId,
+      }))
+    )
+  })
+
+  console.log(fieldRelation, res)
+  const delRelation = getDiff(fieldRelation, res)
+  const addRelation = getDiff(res, fieldRelation)
+  console.log(addRelation, delRelation)
+  delRelation.forEach(async (item) => {
+    return await DefinitionIndexModelFieldRelationController.delete(http, { id: item.id })
+  })
+  addRelation.forEach(async (item) => {
+    return await DefinitionIndexModelFieldRelationController.add(http, { definitionIndexModelFieldRelationDto: item })
+  })
+}
+function judgeStandardMain() {
+  modelDesginFieldController.dataList.forEach((item) => {
+    if (item.modelFieldMetaStandard) {
+      const StandardMain = StandardMainList.value.find((standard) => standard.id === item.modelFieldMetaStandard)
+      if (StandardMain) {
+        const regex = new RegExp(StandardMain.standardRegular)
+        debugger
+        if (!regex.test(item.modelFieldName)) {
+          ElMessage.warning({
+            message: '模型字段' + item.modelFieldName + '名称不符合标准规则',
+          })
+        }
+      }
+    }
+  })
+}
+
 const batchSave = (modelData = null) => {
-  console.log('批量操作')
   modelData = modelData || props.parentTableData
-  return someOptFun(modelDesginFieldController.dataList, (data) => {
+  judgeStandardMain()
+  return someOptFun(modelDesginFieldController.dataList, async (data) => {
     let operate = 'add'
     if (data.id) {
       operate = 'update'
@@ -323,12 +431,15 @@ const batchSave = (modelData = null) => {
       return Promise.resolve()
     } else {
       if (needToAdd(data)) {
-        return modelDesginFieldController[operate](data)
+        const res = await modelDesginFieldController[operate](data)
+        if (!data.id) data.id = res.id
+        return res
       } else {
         return Promise.resolve()
       }
     }
-  }).then(() => {
+  }).then(async () => {
+    await updataRelation(modelData)
     getProjectMemberList()
   })
 }
