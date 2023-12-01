@@ -29,18 +29,6 @@ export default class extends BaseApiTableController {
           name: '业务描述',
           key: 'indexDescription',
         },
-        {
-          name: '数据类型',
-          key: 'dataType',
-        },
-        {
-          name: '口径说明',
-          key: 'caliberDescription',
-        },
-        {
-          name: '度量单位',
-          key: 'caliberMeasureUnit',
-        },
       ]
     }
     super(args)

@@ -40,8 +40,8 @@ export default class extends BaseApiTableController {
           key: 'standardEnglish',
         },
         {
-          name: '标准描述',
-          key: 'standardDescription',
+          name: '标准正则',
+          key: 'standardRegular',
         },
         {
           name: '状态',

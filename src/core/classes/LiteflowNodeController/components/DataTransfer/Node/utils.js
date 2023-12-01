@@ -4,7 +4,6 @@
  * 2.字段映射的非相同字段后，不能使用其他字段进行修改，为了防止这种情况发生，最好把字段映射放到底部
  */
 export function GenerateSeaTunnelConfig(data) {
-  console.log('data', data)
   let sourceIndex = 1
   const seaTunnelConfig = {}
   seaTunnelConfig.env = data.env
@@ -196,16 +195,15 @@ export function GenerateSeaTunnelConfig(data) {
       table: source.table,
       result_table_name: result_table_name,
     }
-
     if (source.isCDC) {
       sourceConfig['database-names'] = [source.database]
-      sourceConfig['table-names'] = [source.table]
-      sourceConfig['base-url'] = source.url
+      sourceConfig['table-names'] = [source.database + '.' + source.table]
+      sourceConfig['base-url'] = sourceConfig.url
+      sourceConfig.username = source.user
     }
 
     if (node.children[index].type === 'sink') {
       const sink = node.children[index].nodeData
-      console.log('sink', sink)
       sourceConfig.query = generateSelectSQL(source.table, sink.fieldNames)
       seaTunnelConfig.sink.push(createSinkCOnfig(sink, { sinkFields: sink.fieldNames, result_table_name }))
     } else {
@@ -244,14 +242,14 @@ function generateInsertSQL(table, fieldNames, type, ids = ['id']) {
     )}) DO UPDATE SET ${fieldNamesUpdateSQL};`
     return sql
   } else if (type === 'Oracle') {
-    const fieldNamesUpdateSQL = fieldNames.map((field) => `target.${field} = source.${field}`).join(', ')
+    const placeholderFields = fieldNames.map((field) => `? As ${field}`).join(', ')
+    const fieldNamesUpdateSQL = fieldNames
+      .filter((field) => !ids.includes(field))
+      .map((field) => `target.${field} = source.${field}`)
+      .join(', ')
     const idEqualString = ids.map((id) => `target.${id} = source.${id}`).join(' AND ')
     const srcFieldNamesString = fieldNames.map((field) => `source.${field}`).join(', ')
-    const sql = `MERGE INTO ${table} As target
-    USING (VALUES (${placeholders})) As source (${fieldNamesString})
-    ON ${idEqualString} WHEN MATCHED THEN
-    UPDATE SET ${fieldNamesUpdateSQL} WHEN NOT MATCHED THEN
-    INSERT (${fieldNamesString}) VALUES (${srcFieldNamesString});`
+    const sql = `MERGE INTO ${table} target USING (SELECT ${placeholderFields} FROM dual) source ON (${idEqualString}) WHEN MATCHED THEN UPDATE SET ${fieldNamesUpdateSQL} WHEN NOT MATCHED THEN INSERT (${fieldNamesString}) VALUES (${srcFieldNamesString})`
     return sql
   } else if (type === 'SqlServer') {
     const fieldNamesUpdateSQL = fieldNames.map((field) => `target.${field} = source.${field}`).join(', ')
@@ -266,13 +264,13 @@ function generateInsertSQL(table, fieldNames, type, ids = ['id']) {
   }
 }
 function getUrl(nodeData) {
-  if (nodeData.type === 'MySQL') {
+  if (nodeData.type === 'MySQL' || nodeData.type === 'MySQL-CDC') {
     return `jdbc:mysql://${nodeData.ip}:${nodeData.port}/${nodeData.database}`
   } else if (nodeData.type === 'PostgreSQL') {
     return `jdbc:postgresql://${nodeData.ip}:${nodeData.port}/${nodeData.database}`
   } else if (nodeData.type === 'Oracle') {
     return `jdbc:oracle:thin:@//${nodeData.ip}:${nodeData.port}/${nodeData.database}`
-  } else if (nodeData.type === 'SqlServer') {
+  } else if (nodeData.type === 'SqlServer' || nodeData.type === 'SqlServer-CDC') {
     return `jdbc:sqlserver://${nodeData.ip}:${nodeData.port};database=${nodeData.database}`
   }
 }
@@ -281,10 +279,9 @@ function generateSelectSQL(table, fieldNames) {
   if (!Array.isArray(fieldNames)) {
     throw new Error('Field names should be an array.')
   }
-
   const fieldNamesString = fieldNames.join(', ')
 
-  const sql = `SELECT ${fieldNamesString} FROM ${table};`
+  const sql = `SELECT ${fieldNamesString} FROM ${table}`
 
   return sql
 }

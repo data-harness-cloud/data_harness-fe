@@ -214,7 +214,7 @@ const sendMsg = async (msg) => {
     state.chatRecordList.splice(index, 1)
   }
   const stream = await openai.chat.completions.create({
-    model: 'lora',
+    model: 'Yi-34B-Chat-8bits',
     messages: [...state.chatRecordList, { role: 'user', content: msg }],
     stream: true,
   })

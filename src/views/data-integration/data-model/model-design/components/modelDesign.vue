@@ -4,7 +4,7 @@
       <div style="display: flex; width: 100%; padding: 16px 0; justify-content: space-between">
         <div class="DesignBox">新建模型</div>
 
-        <div @click="back" style="display: flex">
+        <div @click="back" style="display: flex; cursor: pointer">
           <img src="/static/icons/back.svg" alt="" /><span style="color: #3246d2; font-size: 16px; margin-left: 8px">
             返回
           </span>

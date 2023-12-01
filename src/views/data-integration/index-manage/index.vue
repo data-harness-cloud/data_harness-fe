@@ -234,7 +234,13 @@ const showIndexDesign = ref(false)
 function showIndexDesignFun(index = null) {
   selectedIndex.value = index
   showIndexDesign.value = !showIndexDesign.value
+  if (!index) {
+    indexController.getListByNode(selectedMenu.value)
+  }
 }
+onBeforeUnmount(() => {
+  indexTree.value = null
+})
 </script>
 
 <style lang="scss">

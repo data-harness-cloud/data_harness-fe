@@ -16,7 +16,7 @@ export default class extends BaseApiTableController {
           key: 'modelFieldName',
         },
         {
-          name: '数据类型（字段类型）',
+          name: '字段类型',
           key: 'modelFieldType',
         },
         {
@@ -28,59 +28,26 @@ export default class extends BaseApiTableController {
           key: 'modelFieldDecimalPoint',
         },
         {
-          name: '注解（字段描述）',
+          name: '字段描述',
           key: 'modelFieldDescription',
         },
         {
-          name: '指标维度（字段指标）',
+          name: '字段指标',
           key: 'modelFieldIndex',
         },
         {
-          name: '关联元数据标准',
+          name: '数据标准校验',
           key: 'modelFieldMetaStandard',
         },
         {
-          name: '值域标准（关联值域校验）',
+          name: '数据质量校验',
           key: 'modelFieldValueStandard',
         },
         {
-          name: '主键（主键字段）',
+          name: '主键',
           key: 'modelFieldKey',
-          width: 140,
+          width: 80,
         },
-        //
-        // {
-        //   name: '字段代码',
-        //   key: 'modelFieldCode',
-        // },
-        // {
-        //   name: '字段分区',
-        //   key: 'modelFieldPpartition',
-        // },
-        // {
-        //   name: '模型表来源字段名',
-        //   key: 'modelFieldSourceName',
-        // },
-        // {
-        //   name: '模型表来源字段类型',
-        //   key: 'modelFieldSourceType',
-        // },
-        // {
-        //   name: '字段来源表',
-        //   key: 'modelFieldSourceTable',
-        // },
-        // {
-        //   name: '业务映射json数据',
-        //   key: 'modelFieldMapping',
-        // },
-        // // {
-        // //   name: '模型id',
-        // //   key: 'modelId',
-        // // },
-        // {
-        //   name: '模型引用的标准',
-        //   key: 'modelQuoteStandard',
-        // },
       ]
     }
     args.handleOptions = {

@@ -28,6 +28,10 @@
         <el-input v-if="mode === 'edit'" v-model="state.formData.standardDescription" placeholder="请输入"></el-input>
         <span v-else>{{ state.formData.standardDescription }}</span>
       </el-form-item>
+      <el-form-item label="正则表达式" prop="standardRegular">
+        <el-input v-if="mode === 'edit'" v-model="state.formData.standardRegular" placeholder="请输入"></el-input>
+        <span v-else>{{ state.formData.standardRegular }}</span>
+      </el-form-item>
       <el-row v-if="mode === 'edit'" class="no-scroll flex-box" type="flex" justify="end" style="margin-top: 24px">
         <el-button type="primary" :plain="true" size="large" @click="handleCancel(false)"> 取消 </el-button>
         <el-button type="primary" size="large" @click="handleSubmit"> 提交 </el-button>
@@ -68,21 +72,17 @@ const props = defineProps({
 
 const state = reactive({
   dataExample: {
-    createTime: '',
-    createUserId: 0,
-    dataDeptId: 0,
-    dataUserId: 0,
-    id: 0,
-    projectId: 0,
+    projectId: null,
     standardCode: '',
     standardDescription: '',
-    standardDirectoryId: 0,
+    standardDirectoryId: null,
     standardEnglish: '',
-    standardHeaderId: 0,
+    standardHeaderId: null,
     standardInputMode: '',
     standardName: '',
-    standardStatus: 0,
+    standardStatus: null,
     standardType: '',
+    standardRegular: '',
   },
   formData: null,
   memberIdList: [],
@@ -90,6 +90,7 @@ const state = reactive({
     standardCode: [{ required: true, message: '必须选择', trigger: 'blur' }],
     standardName: [{ required: true, message: '必须选择', trigger: 'blur' }],
     standardEnglish: [{ required: true, message: '必须选择', trigger: 'blur' }],
+    standardRegular: [{ required: true, message: '必须选择', trigger: 'blur' }],
   },
 })
 state.formData = Object.assign({}, state.dataExample, props.defaultData)

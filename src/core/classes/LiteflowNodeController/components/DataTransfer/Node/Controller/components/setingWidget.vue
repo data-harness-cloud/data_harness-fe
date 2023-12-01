@@ -114,7 +114,7 @@ const handleSubmit = () => {
 }
 const modes = ref([
   { name: '离线批同步', key: 'BATCH' },
-  { name: '实时同步', key: 'STREAMING' },
+  { name: '实时同步', key: 'STREAMINGING' },
 ])
 </script>
 
